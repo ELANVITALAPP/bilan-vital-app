@@ -1,0 +1,140 @@
+/**
+ * Variables CSS et définition du thème pour l'application Bilan Vital
+ * Ce fichier contient les variables de couleurs, typographie, espacement et transitions
+ */
+
+/* Définition des constantes globales en SCREAMING_SNAKE_CASE */
+:root {
+    /* Palette de couleurs principale */
+    --COLOR_PRIMARY: #00813F;        /* Vert principal */
+    --COLOR_PRIMARY_LIGHT: #00A36C;  /* Vert plus clair */
+    --COLOR_PRIMARY_DARK: #006633;   /* Vert plus foncé */
+    --COLOR_SECONDARY: #007F5F;      /* Vert secondaire */
+    --COLOR_TERTIARY: #3A8748;       /* Autre variante de vert */
+    
+    /* Couleurs fonctionnelles */
+    --COLOR_BILAN: #006633;          /* Vert profond pour le bilan récapitulatif */
+    --COLOR_PLANNER: #007F5F;        /* Vert calme pour planifier ma semaine */
+    --COLOR_TODAY: #00A36C;          /* Vert dynamique pour la séance du jour */
+    
+    /* Couleurs sémantiques */
+    --COLOR_SUCCESS: #4CAF50;        /* Vert pour succès */
+    --COLOR_WARNING: #FFC107;        /* Jaune pour avertissement */
+    --COLOR_ERROR: #E53935;          /* Rouge pour erreur */
+    --COLOR_INFO: #2196F3;           /* Bleu pour information */
+    
+    /* Couleurs neutres */
+    --COLOR_BLACK: #000000;          /* Noir */
+    --COLOR_WHITE: #FFFFFF;          /* Blanc */
+    --COLOR_GRAY_100: #F8F9FA;       /* Gris très clair */
+    --COLOR_GRAY_200: #E9ECEF;       /* Gris clair */
+    --COLOR_GRAY_300: #DEE2E6;       /* Gris */
+    --COLOR_GRAY_400: #CED4DA;       /* Gris moyen */
+    --COLOR_GRAY_500: #ADB5BD;       /* Gris moyen-foncé */
+    --COLOR_GRAY_600: #6C757D;       /* Gris foncé */
+    --COLOR_GRAY_700: #495057;       /* Gris très foncé */
+    --COLOR_GRAY_800: #343A40;       /* Presque noir */
+    --COLOR_GRAY_900: #212529;       /* Noir grisâtre */
+    
+    /* Couleurs des catégories */
+    --COLOR_STRESS_ALIM_SOMMEIL: #5A9367;  /* Variante de vert pour la catégorie */
+    --COLOR_PERSONNALITE_SANTE: #4A8D5B;   /* Variante de vert pour la catégorie */
+    --COLOR_MOTIVATIONS: #3A8748;          /* Variante de vert pour la catégorie */
+    --COLOR_TESTS_PHYSIQUES: #00813F;      /* Couleur principale pour la catégorie */
+    
+    /* Couleurs d'alerte */
+    --COLOR_ALERT_BG: rgba(254, 240, 138, 0.3);  /* Fond d'alerte */
+    --COLOR_ALERT_BORDER: #F0B429;              /* Bordure d'alerte */
+    
+    /* Typographie */
+    --FONT_PRIMARY: 'Montserrat', sans-serif;     /* Police principale */
+    --FONT_SECONDARY: 'Open Sans', sans-serif;    /* Police secondaire */
+    
+    /* Tailles de police de base */
+    --FONT_SIZE_XS: 0.75rem;    /* 12px */
+    --FONT_SIZE_SM: 0.875rem;   /* 14px */
+    --FONT_SIZE_BASE: 1rem;     /* 16px */
+    --FONT_SIZE_MD: 1.125rem;   /* 18px */
+    --FONT_SIZE_LG: 1.25rem;    /* 20px */
+    --FONT_SIZE_XL: 1.5rem;     /* 24px */
+    --FONT_SIZE_2XL: 1.875rem;  /* 30px */
+    --FONT_SIZE_3XL: 2.25rem;   /* 36px */
+    
+    /* Poids de police */
+    --FONT_WEIGHT_LIGHT: 300;
+    --FONT_WEIGHT_REGULAR: 400;
+    --FONT_WEIGHT_MEDIUM: 500;
+    --FONT_WEIGHT_SEMIBOLD: 600;
+    --FONT_WEIGHT_BOLD: 700;
+    
+    /* Hauteurs de ligne */
+    --LINE_HEIGHT_TIGHT: 1.25;
+    --LINE_HEIGHT_NORMAL: 1.5;
+    --LINE_HEIGHT_LOOSE: 1.75;
+    
+    /* Espacements */
+    --SPACING_0: 0;
+    --SPACING_1: 0.25rem;   /* 4px */
+    --SPACING_2: 0.5rem;    /* 8px */
+    --SPACING_3: 0.75rem;   /* 12px */
+    --SPACING_4: 1rem;      /* 16px */
+    --SPACING_5: 1.25rem;   /* 20px */
+    --SPACING_6: 1.5rem;    /* 24px */
+    --SPACING_8: 2rem;      /* 32px */
+    --SPACING_10: 2.5rem;   /* 40px */
+    --SPACING_12: 3rem;     /* 48px */
+    --SPACING_16: 4rem;     /* 64px */
+    --SPACING_20: 5rem;     /* 80px */
+    --SPACING_24: 6rem;     /* 96px */
+    
+    /* Bordures */
+    --BORDER_RADIUS_SM: 0.125rem;    /* 2px */
+    --BORDER_RADIUS_MD: 0.25rem;     /* 4px */
+    --BORDER_RADIUS_LG: 0.5rem;      /* 8px */
+    --BORDER_RADIUS_XL: 1rem;        /* 16px */
+    --BORDER_RADIUS_FULL: 9999px;    /* Rond */
+    
+    /* Ombres */
+    --SHADOW_SM: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --SHADOW_MD: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --SHADOW_LG: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --SHADOW_XL: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    /* Transitions */
+    --TRANSITION_FAST: 150ms;
+    --TRANSITION_NORMAL: 300ms;
+    --TRANSITION_SLOW: 500ms;
+    
+    /* Z-index */
+    --Z_INDEX_DROPDOWN: 1000;
+    --Z_INDEX_STICKY: 1020;
+    --Z_INDEX_FIXED: 1030;
+    --Z_INDEX_MODAL_BACKDROP: 1040;
+    --Z_INDEX_MODAL: 1050;
+    --Z_INDEX_POPOVER: 1060;
+    --Z_INDEX_TOOLTIP: 1070;
+}
+
+/* Theme sombre (préparé mais non activé par défaut) */
+[data-theme="dark"] {
+    --COLOR_PRIMARY: #00A36C;
+    --COLOR_PRIMARY_LIGHT: #00C286;
+    --COLOR_PRIMARY_DARK: #00813F;
+    
+    --COLOR_BLACK: #FFFFFF;
+    --COLOR_WHITE: #121212;
+    --COLOR_GRAY_100: #212529;
+    --COLOR_GRAY_200: #343A40;
+    --COLOR_GRAY_300: #495057;
+    --COLOR_GRAY_400: #6C757D;
+    --COLOR_GRAY_500: #ADB5BD;
+    --COLOR_GRAY_600: #CED4DA;
+    --COLOR_GRAY_700: #DEE2E6;
+    --COLOR_GRAY_800: #E9ECEF;
+    --COLOR_GRAY_900: #F8F9FA;
+    
+    --SHADOW_SM: 0 1px 2px 0 rgba(255, 255, 255, 0.05);
+    --SHADOW_MD: 0 4px 6px -1px rgba(255, 255, 255, 0.07), 0 2px 4px -1px rgba(255, 255, 255, 0.03);
+    --SHADOW_LG: 0 10px 15px -3px rgba(255, 255, 255, 0.07), 0 4px 6px -2px rgba(255, 255, 255, 0.03);
+    --SHADOW_XL: 0 20px 25px -5px rgba(255, 255, 255, 0.07), 0 10px 10px -5px rgba(255, 255, 255, 0.02);
+}

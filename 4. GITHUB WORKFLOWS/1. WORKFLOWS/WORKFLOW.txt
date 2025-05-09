@@ -1,0 +1,179 @@
+name: Bilan Vital CI/CD
+
+# Constantes définies en SCREAMING_SNAKE_CASE
+# NODE_VERSION: '18'
+# MAIN_BRANCH: 'main'
+# DEPLOYMENT_BRANCH: 'gh-pages'
+# BUILD_ARTIFACTS_NAME: 'build-artifacts'
+# ARTIFACT_PATH: 'dist/'
+
+# Déclenchement du workflow
+on:
+  # Déclencher sur les push vers la branche main
+  push:
+    branches: [ main ]
+  # Déclencher sur les pull requests vers main
+  pull_request:
+    branches: [ main ]
+  # Permettre le déclenchement manuel depuis l'interface GitHub
+  workflow_dispatch:
+
+# Définition des jobs
+jobs:
+  # Job de validation du code
+  validate:
+    name: Lint and Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # NODE_VERSION
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint || echo "Linting issues found"
+
+      - name: Validate HTML
+        run: npm run validate-html || echo "HTML validation issues found"
+
+      - name: Check JavaScript syntax
+        run: npm run check-js || echo "JavaScript syntax issues found"
+
+  # Job de test
+  test:
+    name: Run Tests
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # NODE_VERSION
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm test
+
+  # Job de construction
+  build:
+    name: Build
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # NODE_VERSION
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Optimize assets
+        run: |
+          npm run optimize-css
+          npm run optimize-js
+          npm run optimize-images
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts  # BUILD_ARTIFACTS_NAME
+          path: dist/  # ARTIFACT_PATH
+
+  # Job de déploiement sur GitHub Pages
+  deployGithubPages:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    # Uniquement sur la branche main et non sur les pull requests
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts  # BUILD_ARTIFACTS_NAME
+          path: dist  # ARTIFACT_PATH sans le trailing slash
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages  # DEPLOYMENT_BRANCH
+          folder: dist  # ARTIFACT_PATH sans le trailing slash
+          clean: true
+
+  # Job de déploiement sur Vercel
+  deployVercel:
+    name: Deploy to Vercel
+    needs: build
+    runs-on: ubuntu-latest
+    # Uniquement sur la branche main et non sur les pull requests
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts  # BUILD_ARTIFACTS_NAME
+          path: dist  # ARTIFACT_PATH sans le trailing slash
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Deploy to Vercel
+        run: |
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --confirm
+          else
+            vercel --token ${{ secrets.VERCEL_TOKEN }} --confirm
+          fi
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+
+  # Job de notification
+  notify:
+    name: Send Notifications
+    needs: [deployGithubPages, deployVercel]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deployment Status
+        run: |
+          if [ "${{ needs.deployGithubPages.result }}" == "success" ] && [ "${{ needs.deployVercel.result }}" == "success" ]; then
+            echo "Deployment successful on both platforms!"
+          else
+            echo "Deployment failed on one or more platforms."
+            exit 1
+          fi
+
+      # Vous pouvez ajouter ici des étapes pour envoyer des notifications
+      # par email, Slack, ou autres services
