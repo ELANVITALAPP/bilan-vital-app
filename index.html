@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilan Vital</title>
+    
+    <!-- Styles CSS intégrés pour garantir un affichage de base -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        
+        header {
+            background-color: #fff;
+            border-bottom: 3px solid #00813F;
+            padding: 1rem;
+        }
+        
+        h1 {
+            color: #00813F;
+            margin: 0;
+        }
+        
+        nav {
+            border-bottom: 1px solid #eee;
+            padding: 0.5rem 1rem;
+        }
+        
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+        
+        nav ul li {
+            margin-right: 1.5rem;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: #00813F;
+            font-weight: 500;
+        }
+        
+        .welcome {
+            border-left: 4px solid #00813F;
+            background-color: #f9f9f9;
+            padding: 1rem 1.5rem;
+            margin: 1rem;
+        }
+        
+        section {
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        h2 {
+            color: #444;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+        
+        footer {
+            border-top: 1px solid #eee;
+            padding: 1rem;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+    
+    <!-- Lien vers la feuille de style principale (commenté pour le moment) -->
+    <!-- <link rel="stylesheet" href="css/style.css"> -->
+</head>
+<body>
+    <header>
+        <h1>Bilan Vital</h1>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="?page=tests">Tests</a></li>
+            <li><a href="?page=bilan">Bilan</a></li>
+            <li><a href="?page=planification">Planification</a></li>
+            <li><a href="?page=seance">Séance du jour</a></li>
+        </ul>
+    </nav>
+    
+    <main>
+        <section class="welcome">
+            <h2>Bienvenue sur l'application Bilan Vital</h2>
+            <p>Évaluez votre santé et votre bien-être avec des tests personnalisés et recevez des recommandations adaptées.</p>
+        </section>
+        
+        <section id="tests">
+            <h2>Tests</h2>
+            <p>Cette section est en cours de développement. Elle vous permettra bientôt d'accéder à différents tests pour évaluer votre condition physique et mentale.</p>
+        </section>
+        
+        <section id="bilan">
+            <h2>Bilan</h2>
+            <p>Cette section est en cours de développement. Elle vous permettra bientôt de consulter le récapitulatif de vos résultats et de votre progression.</p>
+        </section>
+        
+        <section id="planification">
+            <h2>Planification</h2>
+            <p>Cette section est en cours de développement. Elle vous permettra bientôt de planifier vos activités hebdomadaires en fonction de vos objectifs.</p>
+        </section>
+        
+        <section id="seance">
+            <h2>Séance du jour</h2>
+            <p>Cette section est en cours de développement. Elle vous proposera bientôt des séances quotidiennes adaptées à votre profil.</p>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Bilan Vital - Tous droits réservés</p>
+    </footer>
+    
+    <!-- Script JavaScript pour la navigation simple -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fonction pour obtenir les paramètres de l'URL
+            function getUrlParameter(name) {
+                name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+                var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+                var results = regex.exec(location.search);
+                return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+            }
+            
+            // Récupérer la page demandée
+            var page = getUrlParameter('page');
+            
+            // Afficher la section demandée et masquer les autres
+            var sections = document.querySelectorAll('main > section');
+            if (page) {
+                for (var i = 0; i < sections.length; i++) {
+                    if (sections[i].id === page || (page === '' && sections[i].classList.contains('welcome'))) {
+                        sections[i].style.display = 'block';
+                    } else {
+                        sections[i].style.display = 'none';
+                    }
+                }
+            }
+            
+            // Ajouter un événement de clic pour les liens de navigation
+            var navLinks = document.querySelectorAll('nav a');
+            for (var i = 0; i < navLinks.length; i++) {
+                navLinks[i].addEventListener('click', function(e) {
+                    // Laisser le navigateur traiter le lien normalement
+                });
+            }
+        });
+    </script>
+</body>
+</html>
