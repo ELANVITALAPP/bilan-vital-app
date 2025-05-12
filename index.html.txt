@@ -4,79 +4,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bilan Vital</title>
-    
-    <!-- Styles CSS - Utilisez vos fichiers existants -->
-   <link rel="stylesheet" href="CSS/VARIABLES.css">
-   <link rel="stylesheet" href="CSS/STYLE.css">
-   <link rel="stylesheet" href="CSS/RESPONSIVE.css">
-    
-    <!-- Styles CSS intégrés pour garantir un affichage de base -->
     <style>
+        /* Réinitialisation de base */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Variables de couleurs */
+        :root {
+            --color-primary: #00813F;
+            --color-primary-light: #00A36C;
+            --color-primary-dark: #006633;
+            --color-text: #333333;
+            --color-background: #FFFFFF;
+            --color-gray-light: #F5F5F5;
+            --color-gray: #DDDDDD;
+        }
+        
+        /* Styles de base */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            color: #333;
+            color: var(--color-text);
+            background-color: var(--color-background);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
         
+        /* En-tête */
         header {
-            background-color: #fff;
-            border-bottom: 3px solid #00813F;
-            padding: 1rem;
+            padding: 20px 0;
+            border-bottom: 3px solid var(--color-primary);
+            margin-bottom: 20px;
         }
         
         h1 {
-            color: #00813F;
-            margin: 0;
+            color: var(--color-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
         }
         
+        /* Navigation */
         nav {
-            border-bottom: 1px solid #eee;
-            padding: 0.5rem 1rem;
+            margin-bottom: 30px;
         }
         
         nav ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
+            list-style: none;
             display: flex;
+            border-bottom: 1px solid var(--color-gray);
         }
         
-        nav ul li {
-            margin-right: 1.5rem;
+        nav li {
+            margin-right: 30px;
         }
         
-        nav ul li a {
+        nav a {
+            display: block;
+            padding: 10px 0;
+            color: var(--color-primary);
             text-decoration: none;
-            color: #00813F;
-            font-weight: 500;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--color-primary-light);
+        }
+        
+        /* Sections */
+        section {
+            margin-bottom: 40px;
         }
         
         .welcome {
-            border-left: 4px solid #00813F;
-            background-color: #f9f9f9;
-            padding: 1rem 1.5rem;
-            margin: 1rem;
-        }
-        
-        section {
-            padding: 1rem;
-            margin-bottom: 2rem;
+            background-color: var(--color-gray-light);
+            padding: 25px;
+            border-radius: 5px;
+            border-left: 5px solid var(--color-primary);
+            margin-bottom: 40px;
         }
         
         h2 {
-            color: #444;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 0.5rem;
+            color: var(--color-primary-dark);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--color-gray);
         }
         
+        p {
+            margin-bottom: 15px;
+        }
+        
+        /* Pied de page */
         footer {
-            border-top: 1px solid #eee;
-            padding: 1rem;
+            padding: 20px 0;
+            margin-top: 40px;
+            border-top: 1px solid var(--color-gray);
             text-align: center;
             color: #666;
             font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+            }
+            
+            nav li {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
@@ -87,10 +129,10 @@
     
     <nav>
         <ul>
-            <li><a href="?page=tests">Tests</a></li>
-            <li><a href="?page=bilan">Bilan</a></li>
-            <li><a href="?page=planification">Planification</a></li>
-            <li><a href="?page=seance">Séance du jour</a></li>
+            <li><a href="#tests">Tests</a></li>
+            <li><a href="#bilan">Bilan</a></li>
+            <li><a href="#planification">Planification</a></li>
+            <li><a href="#seance">Séance du jour</a></li>
         </ul>
     </nav>
     
@@ -124,33 +166,5 @@
     <footer>
         <p>&copy; 2025 Bilan Vital - Tous droits réservés</p>
     </footer>
-    
-    <!-- Script JavaScript pour la navigation simple -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Fonction pour obtenir les paramètres de l'URL
-            function getUrlParameter(name) {
-                name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-                var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-                var results = regex.exec(location.search);
-                return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-            }
-            
-            // Récupérer la page demandée
-            var page = getUrlParameter('page');
-            
-            // Afficher la section demandée et masquer les autres
-            var sections = document.querySelectorAll('main > section');
-            if (page) {
-                for (var i = 0; i < sections.length; i++) {
-                    if (sections[i].id === page || (page === '' && sections[i].classList.contains('welcome'))) {
-                        sections[i].style.display = 'block';
-                    } else {
-                        sections[i].style.display = 'none';
-                    }
-                }
-            }
-        });
-    </script>
 </body>
 </html>
