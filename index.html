@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Bilan Vital</title>
+    <meta name="description" content="Application Bilan Vital : Évaluez votre santé et bien-être avec des tests personnalisés et recevez des recommandations adaptées.">
+    
+    <!-- Styles CSS - Chargés en premier pour l'expérience utilisateur -->
+    <link rel="stylesheet" href="./1. CSS/VARIABLES.css">
+    <link rel="stylesheet" href="./1. CSS/STYLE.css">
+    <link rel="stylesheet" href="./1. CSS/RESPONSIVE.css">
+    
+    <!-- Favicon et icônes pour les différentes plateformes - Commenté car les fichiers n'existent peut-être pas encore -->
+    <!-- <link rel="icon" href="assets/icons/favicon.ico" type="image/x-icon"> -->
+    <!-- <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"> -->
+
+    <!-- SCRIPTS JAVASCRIPT - Adaptés à votre structure de dossiers -->
+    
+    <!-- 1. Modules utilitaires fondamentaux -->
+    <script defer src="./2. SRC/UTILS/HELPERS.js"></script>
+    <script defer src="./2. SRC/UTILS/STORAGE.js"></script>
+    <script defer src="./2. SRC/UTILS/CHARTS.js"></script>
+    
+    <!-- 2. Modules de données -->
+    <script defer src="./2. SRC/UTILS/TEST DATA.js"></script>
+    <script defer src="./2. SRC/UTILS/USER DATA.js"></script>
+    
+    <!-- 3. Modules fonctionnels / Composants -->
+    <script defer src="./2. SRC/FEATURES/TESTS/TESTS.js"></script>
+    <script defer src="./2. SRC/FEATURES/BILAN/BILAN.js"></script>
+    <script defer src="./2. SRC/FEATURES/PLANNER/PLANNER.js"></script>
+    <script defer src="./2. SRC/FEATURES/TODAY-SESSION/TODAY SESSION.js"></script>
+    
+    <!-- 4. Système de navigation -->
+    <script defer src="./2. SRC/UTILS/NAVIGATION.js"></script>
+    
+    <!-- 5. Point d'entrée principal de l'application -->
+    <script defer src="./2. SRC/CORE/APP.js"></script>
+</head>
+<body>
+    <!-- Conteneur principal de l'application -->
+    <div id="appContainer" class="bv-app">
+        <!-- Header -->
+        <header id="appHeader" class="bv-header">
+            <h1>Bilan Vital</h1>
+        </header>
+        
+        <!-- Navigation -->
+        <nav id="navMenu" class="bv-nav">
+            <ul>
+                <li><a href="#tests">Tests</a></li>
+                <li><a href="#bilan">Bilan</a></li>
+                <li><a href="#planner">Planification</a></li>
+                <li><a href="#today">Séance du jour</a></li>
+            </ul>
+        </nav>
+        
+        <!-- Contenu principal -->
+        <main id="mainContent" class="bv-main">
+            <!-- Contenu initial qui sera visible même si JavaScript ne fonctionne pas -->
+            <div class="bv-welcome">
+                <h2>Bienvenue sur l'application Bilan Vital</h2>
+                <p>Évaluez votre santé et bien-être avec des tests personnalisés et recevez des recommandations adaptées.</p>
+            </div>
+            
+            <!-- Indicateur de chargement -->
+            <div class="bv-loading">
+                <div class="bv-spinner"></div>
+                <p>Chargement de l'application...</p>
+            </div>
+        </main>
+        
+        <!-- Footer -->
+        <footer id="appFooter" class="bv-footer">
+            <p>&copy; 2025 Bilan Vital</p>
+        </footer>
+    </div>
+
+    <!-- Script de fallback en cas d'erreur -->
+    <script>
+        window.addEventListener('error', function(e) {
+            console.error('Erreur de chargement de script:', e.filename);
+            
+            // Afficher un message d'erreur convivial à l'utilisateur
+            const mainContent = document.getElementById('mainContent');
+            if (mainContent) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'bv-error';
+                errorDiv.innerHTML = '<h2>Problème de chargement</h2><p>L\'application rencontre des difficultés lors du chargement. Veuillez réessayer ultérieurement.</p>';
+                
+                // Remplacer l'indicateur de chargement par le message d'erreur
+                const loading = document.querySelector('.bv-loading');
+                if (loading) {
+                    loading.style.display = 'none';
+                }
+                
+                mainContent.appendChild(errorDiv);
+            }
+        }, true);
+    </script>
+</body>
+</html>
