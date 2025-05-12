@@ -6,9 +6,9 @@
     <title>Bilan Vital</title>
     
     <!-- Styles CSS - Utilisez vos fichiers existants -->
-    <link rel="stylesheet" href="CSS/VARIABLES">
-    <link rel="stylesheet" href="CSS/STYLE">
-    <link rel="stylesheet" href="CSS/RESPONSIVE">
+   <link rel="stylesheet" href="CSS/VARIABLES.css">
+   <link rel="stylesheet" href="CSS/STYLE.css">
+   <link rel="stylesheet" href="CSS/RESPONSIVE.css">
     
     <!-- Styles CSS intégrés pour garantir un affichage de base -->
     <style>
