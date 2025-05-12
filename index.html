@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilan Vital</title>
+    <style>
+        /* Réinitialisation de base */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Variables de couleurs */
+        :root {
+            --color-primary: #00813F;
+            --color-primary-light: #00A36C;
+            --color-primary-dark: #006633;
+            --color-text: #333333;
+            --color-background: #FFFFFF;
+            --color-gray-light: #F5F5F5;
+            --color-gray: #DDDDDD;
+        }
+        
+        /* Styles de base */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--color-text);
+            background-color: var(--color-background);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* En-tête */
+        header {
+            padding: 20px 0;
+            border-bottom: 3px solid var(--color-primary);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: var(--color-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        /* Navigation */
+        nav {
+            margin-bottom: 30px;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            border-bottom: 1px solid var(--color-gray);
+        }
+        
+        nav li {
+            margin-right: 30px;
+        }
+        
+        nav a {
+            display: block;
+            padding: 10px 0;
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--color-primary-light);
+        }
+        
+        /* Sections */
+        section {
+            margin-bottom: 40px;
+        }
+        
+        .welcome {
+            background-color: var(--color-gray-light);
+            padding: 25px;
+            border-radius: 5px;
+            border-left: 5px solid var(--color-primary);
+            margin-bottom: 40px;
+        }
+        
+        h2 {
+            color: var(--color-primary-dark);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--color-gray);
+        }
+        
+        p {
+            margin-bottom: 15px;
+        }
+        
+        /* Pied de page */
+        footer {
+            padding: 20px 0;
+            margin-top: 40px;
+            border-top: 1px solid var(--color-gray);
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+            }
+            
+            nav li {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Bilan Vital</h1>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#tests">Tests</a></li>
+            <li><a href="#bilan">Bilan</a></li>
+            <li><a href="#planification">Planification</a></li>
+            <li><a href="#seance">Séance du jour</a></li>
+        </ul>
+    </nav>
+    
+    <main>
+        <section class="welcome">
+            <h2>Bienvenue sur l'application Bilan Vital</h2>
+            <p>Évaluez votre santé et votre bien-être avec des tests personnalisés et recevez des recommandations adaptées.</p>
+        </section>
+        
+        <section id="tests">
+            <h2>Tests</h2>
+            <p>Cette section est en cours de développement. Elle vous permettra bientôt d'accéder à différents tests pour évaluer votre condition physique et mentale.</p>
+        </section>
+        
+        <section id="bilan">
+            <h2>Bilan</h2>
+            <p>Cette section est en cours de développement. Elle vous permettra bientôt de consulter le récapitulatif de vos résultats et de votre progression.</p>
+        </section>
+        
+        <section id="planification">
+            <h2>Planification</h2>
+            <p>Cette section est en cours de développement. Elle vous permettra bientôt de planifier vos activités hebdomadaires en fonction de vos objectifs.</p>
+        </section>
+        
+        <section id="seance">
+            <h2>Séance du jour</h2>
+            <p>Cette section est en cours de développement. Elle vous proposera bientôt des séances quotidiennes adaptées à votre profil.</p>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Bilan Vital - Tous droits réservés</p>
+    </footer>
+</body>
+</html>
