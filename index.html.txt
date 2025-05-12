@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bilan Vital</title>
     
+    <!-- Styles CSS - Utilisez vos fichiers existants -->
+    <link rel="stylesheet" href="CSS/VARIABLES">
+    <link rel="stylesheet" href="CSS/STYLE">
+    <link rel="stylesheet" href="CSS/RESPONSIVE">
+    
     <!-- Styles CSS intégrés pour garantir un affichage de base -->
     <style>
         body {
@@ -74,9 +79,6 @@
             font-size: 0.9rem;
         }
     </style>
-    
-    <!-- Lien vers la feuille de style principale (commenté pour le moment) -->
-    <!-- <link rel="stylesheet" href="css/style.css"> -->
 </head>
 <body>
     <header>
@@ -147,14 +149,6 @@
                         sections[i].style.display = 'none';
                     }
                 }
-            }
-            
-            // Ajouter un événement de clic pour les liens de navigation
-            var navLinks = document.querySelectorAll('nav a');
-            for (var i = 0; i < navLinks.length; i++) {
-                navLinks[i].addEventListener('click', function(e) {
-                    // Laisser le navigateur traiter le lien normalement
-                });
             }
         });
     </script>
