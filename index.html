@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bilan Vital</title>
-    <!-- Fichiers CSS externes -->
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <!-- Fichiers CSS externes - chemins corrigés avec CSS majuscule -->
+    <link rel="stylesheet" href="CSS/variables.css">
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="CSS/responsive.css">
+    <!-- Vous pouvez aussi utiliser postcss.css si nécessaire -->
+    <link rel="stylesheet" href="CSS/postcss.css">
     <!-- Styles de base (conservés en cas de problème avec les CSS externes) -->
     <style>
         /* Réinitialisation de base */
@@ -184,23 +186,31 @@
         <p>&copy; 2025 Bilan Vital - Tous droits réservés</p>
     </footer>
 
-    <!-- Utilitaires -->
-    <script src="js/utils/helpers.js"></script>
-    <script src="js/utils/storage.js"></script>
-    <script src="js/utils/charts.js"></script>
+    <!-- Utilitaires - chemins corrigés -->
+    <script src="JS/utilitaires/helpers.js"></script>
+    <script src="JS/utilitaires/stockage.js"></script>
+    <script src="JS/utilitaires/charts.js"></script>
 
-    <!-- Données -->
-    <script src="js/data/testsData.js"></script>
-    <script src="js/data/userData.js"></script>
+    <!-- Données - chemins corrigés -->
+    <script src="JS/data/testsData.js"></script>
+    <script src="JS/data/userData.js"></script>
 
-    <!-- Composants -->
-    <script src="js/components/tests.js"></script>
-    <script src="js/components/bilan.js"></script>
-    <script src="js/components/planner.js"></script>
-    <script src="js/components/todaySession.js"></script>
+    <!-- Composants - chemins corrigés -->
+    <script src="JS/components/tests.js"></script>
+    <script src="JS/components/bilan.js"></script>
+    <script src="JS/components/planner.js"></script>
+    <script src="JS/components/todaySession.js"></script>
 
-    <!-- Navigation et application principale -->
-    <script src="js/navigation.js"></script>
-    <script src="js/app.js"></script>
+    <!-- Navigation et application principale - chemins corrigés -->
+    <script src="JS/navigation.js"></script>
+    <script src="JS/utilitaires/app.js"></script>
+
+    <!-- Script de test pour vérifier le fonctionnement -->
+    <script>
+        console.log("Script de test dans index.html chargé");
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM chargé - Vérification de l'initialisation du site");
+        });
+    </script>
 </body>
 </html>
