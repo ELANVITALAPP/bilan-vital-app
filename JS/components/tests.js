@@ -625,19 +625,21 @@ const testsModule = (function() {
             const testDuration = Math.floor((testEndTime - testStartTime) / 1000);
             
             // Évaluer les résultats
-            const testResults = evaluateTest(currentTest, testAnswers, testDuration);
-            
-            // Sauvegarder les résultats
-            userData.saveTestResult(currentTest.id, testResults)
-                .then(() => {
-                    // Afficher les résultats
-                    displayTestResults(testResults);
-                })
-                .catch(error => {
-                    console.error('Erreur lors de la sauvegarde des résultats:', error);
-                    // Afficher quand même les résultats en cas d'erreur
-                    displayTestResults(testResults);
-                });
+            evaluateTest(currentTest, testAnswers, testDuration).then(testResults => {
+                // Sauvegarder les résultats
+                userData.saveTestResult(currentTest.id, testResults)
+                    .then(() => {
+                        // Afficher les résultats
+                        displayTestResults(testResults);
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la sauvegarde des résultats:', error);
+                        // Afficher quand même les résultats en cas d'erreur
+                        displayTestResults(testResults);
+                    });
+            }).catch(error => {
+                console.error('Erreur lors de l\'évaluation du test:', error);
+            });
             
             // Nettoyer l'état du test
             cleanupTestState();
@@ -653,7 +655,7 @@ const testsModule = (function() {
      * @param {number} duration - Durée du test en secondes
      * @returns {Object} Résultats calculés
      */
-    function evaluateTest(test, answers, duration) {
+    async function evaluateTest(test, answers, duration) {
         let results = {
             testId: test.id,
             completedAt: new Date().toISOString(),
@@ -887,3 +889,4 @@ document.addEventListener('DOMContentLoaded', function() {
 // Export du module pour utilisation dans d'autres fichiers
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = testsModule;
+}
