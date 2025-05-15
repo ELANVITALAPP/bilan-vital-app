@@ -826,6 +826,4 @@ document.addEventListener('DOMContentLoaded', function() {
 // Export du module pour utilisation dans d'autres fichiers
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = todaySessionModule;
-}/**
- * Module de recommandation quotidienne pour l'application Bilan Vital
- * Gère l'évaluation de l'état du jour et les recommandations de séances adapt
+}
