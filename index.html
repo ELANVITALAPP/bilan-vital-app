@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bilan Vital</title>
-    <!-- Fichiers CSS externes - chemins corrigés avec CSS majuscule -->
-    <link rel="stylesheet" href="CSS/variables.css">
-    <link rel="stylesheet" href="CSS/style.css">
-    <link rel="stylesheet" href="CSS/responsive.css">
-    <!-- Vous pouvez aussi utiliser postcss.css si nécessaire -->
-    <link rel="stylesheet" href="CSS/postcss.css">
+    <!-- Fichiers CSS externes - chemins corrigés avec ./ -->
+    <link rel="stylesheet" href="./CSS/variables.css">
+    <link rel="stylesheet" href="./CSS/style.css">
+    <link rel="stylesheet" href="./CSS/responsive.css">
+    <link rel="stylesheet" href="./CSS/postcss.css">
     <!-- Styles de base (conservés en cas de problème avec les CSS externes) -->
     <style>
         /* Réinitialisation de base */
@@ -143,7 +142,8 @@
         </ul>
     </nav>
     
-    <main>
+    <!-- Ajout de l'ID mainContent pour navigation.js -->
+    <main id="mainContent">
         <section class="welcome">
             <h2>Bienvenue sur l'application Bilan Vital</h2>
             <p>Évaluez votre santé et votre bien-être avec des tests personnalisés et recevez des recommandations adaptées.</p>
@@ -186,31 +186,37 @@
         <p>&copy; 2025 Bilan Vital - Tous droits réservés</p>
     </footer>
 
-    <!-- Utilitaires - chemins corrigés -->
-    <script src="JS/utilitaires/helpers.js"></script>
-    <script src="JS/utilitaires/stockage.js"></script>
-    <script src="JS/utilitaires/charts.js"></script>
-
-    <!-- Données - chemins corrigés -->
-    <script src="JS/data/testsData.js"></script>
-    <script src="JS/data/userData.js"></script>
-
-    <!-- Composants - chemins corrigés -->
-    <script src="JS/components/tests.js"></script>
-    <script src="JS/components/bilan.js"></script>
-    <script src="JS/components/planner.js"></script>
-    <script src="JS/components/todaySession.js"></script>
-
-    <!-- Navigation et application principale - chemins corrigés -->
-    <script src="JS/navigation.js"></script>
-    <script src="JS/utilitaires/app.js"></script>
-
-    <!-- Script de test pour vérifier le fonctionnement -->
+    <!-- Script pour tester l'environnement de base, indépendant des autres scripts -->
     <script>
-        console.log("Script de test dans index.html chargé");
+        console.log("Script d'initialisation de base chargé");
+        
+        // Cette fonction permet de vérifier si un script s'est chargé correctement
+        function scriptLoaded(name) {
+            console.log("✅ Script chargé : " + name);
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
-            console.log("DOM chargé - Vérification de l'initialisation du site");
+            console.log("DOM entièrement chargé");
         });
     </script>
+
+    <!-- Utilitaires - chemins corrigés -->
+    <script src="./JS/utilitaires/helpers.js" onload="scriptLoaded('helpers.js')"></script>
+    <script src="./JS/utilitaires/stockage.js" onload="scriptLoaded('stockage.js')"></script>
+    <script src="./JS/utilitaires/charts.js" onload="scriptLoaded('charts.js')"></script>
+
+    <!-- Données - chemins corrigés -->
+    <script src="./JS/data/testsData.js" onload="scriptLoaded('testsData.js')"></script>
+    <script src="./JS/data/userData.js" onload="scriptLoaded('userData.js')"></script>
+
+    <!-- Composants - chemins corrigés -->
+    <script src="./JS/components/tests.js" onload="scriptLoaded('tests.js')"></script>
+    <script src="./JS/components/bilan.js" onload="scriptLoaded('bilan.js')"></script>
+    <script src="./JS/components/planner.js" onload="scriptLoaded('planner.js')"></script>
+    <script src="./JS/components/todaySession.js" onload="scriptLoaded('todaySession.js')"></script>
+
+    <!-- Navigation et application principale - chemins corrigés -->
+    <script src="./JS/navigation.js" onload="scriptLoaded('navigation.js')"></script>
+    <script src="./JS/utilitaires/app.js" onload="scriptLoaded('app.js')"></script>
 </body>
 </html>
