@@ -1,229 +1,4 @@
-function saveCustomPlan() {
-        // Parcourir toutes les séances et mettre à jour leurs propriétés
-        currentWeeklyPlan.plannedSessions.forEach(session => {
-            const dayIndex = session.day;
-            
-            const typeSelect = document.getElementById(`sessionType-${dayIndex}`);
-            const durInput = document.getElementById(`sessionDuration-${dayIndex}`);
-            const intensitySelect = document.getElementById(`sessionIntensity-${dayIndex}`);
-            
-            if (typeSelect && durInput && intensitySelect) {
-                // Mettre à jour le type d'activité
-                const newActivityType = typeSelect.value;
-                const activityInfo = ACTIVITY_TYPES.find(type => type.id === newActivityType);
-                
-                session.activityType = newActivityType;
-                session.activityName = activityInfo.name;
-                session.activityIcon = activityInfo.icon;
-                session.activityColor = activityInfo.color;
-                
-                // Mettre à jour la durée
-                session.duration = parseInt(durInput.value);
-                
-                // Mettre à jour l'intensité
-                session.intensity = intensitySelect.value;
-            }
-        });
-        
-        // Mettre à jour les métadonnées du plan
-        currentWeeklyPlan.totalDuration = currentWeeklyPlan.plannedSessions.reduce(
-            (total, session) => total + session.duration, 0
-        );
-        
-        // Afficher le plan mis à jour
-        displayGeneratedPlan(currentWeeklyPlan);
-    }
-    
-    /**
-     * Génère un nouveau plan hebdomadaire
-     */
-    function regeneratePlan() {
-        // Générer un nouveau plan avec les mêmes paramètres
-        const newPlan = generateWeeklyPlan();
-        
-        // Afficher le nouveau plan
-        displayGeneratedPlan(newPlan);
-        
-        // Mettre à jour le plan courant
-        currentWeeklyPlan = newPlan;
-    }
-    
-    /**
-     * Marque une séance comme complétée
-     * @param {number} dayIndex - Index du jour
-     */
-    async function markSessionAsCompleted(dayIndex) {
-        if (!currentWeeklyPlan) return;
-        
-        // Trouver la séance correspondante
-        const session = currentWeeklyPlan.plannedSessions.find(s => s.day === dayIndex);
-        if (!session) return;
-        
-        // Marquer comme complétée
-        session.completed = true;
-        
-        // Mettre à jour la date de dernière modification
-        currentWeeklyPlan.lastUpdated = new Date().toISOString();
-        
-        // Sauvegarder le plan mis à jour
-        try {
-            await userData.saveWeeklyPlan(currentWeeklyPlan);
-            
-            // Rafraîchir l'affichage
-            displayExistingPlan();
-        } catch (error) {
-            console.error('Erreur lors de la mise à jour du plan:', error);
-            alert('Une erreur est survenue lors de la mise à jour du plan.');
-        }
-    }
-    
-    /**
-     * Calcule le taux d'adhérence au plan
-     * @returns {number} Taux d'adhérence (0-1)
-     */
-    function calculateAdherenceRate() {
-        if (!currentWeeklyPlan || !currentWeeklyPlan.plannedSessions.length) return 0;
-        
-        // Calculer le jour actuel de la semaine (0 = lundi, 6 = dimanche)
-        const today = new Date();
-        const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1;
-        
-        // Compter les séances passées ou du jour même
-        const pastOrTodaySessions = currentWeeklyPlan.plannedSessions.filter(s => s.day <= dayOfWeek);
-        if (!pastOrTodaySessions.length) return 1; // Aucune séance passée
-        
-        // Compter les séances complétées
-        const completedSessions = pastOrTodaySessions.filter(s => s.completed);
-        
-        // Calculer le taux d'adhérence
-        return completedSessions.length / pastOrTodaySessions.length;
-    }
-    
-    /**
-     * Retourne un message d'encouragement basé sur le taux d'adhérence
-     * @returns {string} Message d'encouragement
-     */
-    function getAdherenceMessage() {
-        const rate = calculateAdherenceRate();
-        
-        if (rate >= 0.9) {
-            return ADHERENCE_MESSAGES.EXCELLENT;
-        } else if (rate >= 0.7) {
-            return ADHERENCE_MESSAGES.VERY_GOOD;
-        } else if (rate >= 0.5) {
-            return ADHERENCE_MESSAGES.GOOD;
-        } else if (rate >= 0.3) {
-            return ADHERENCE_MESSAGES.FAIR;
-        } else {
-            return ADHERENCE_MESSAGES.POOR;
-        }
-    }
-    
-    /**
-     * Ajuste le plan hebdomadaire existant
-     */
-    function adjustPlan() {
-        if (!currentWeeklyPlan) return;
-        
-        // Utiliser la même fonction que pour personnaliser un plan
-        customizePlan();
-    }
-    
-    /**
-     * Crée un nouveau plan hebdomadaire
-     */
-    function createNewPlan() {
-        // Afficher un message de confirmation
-        if (confirm('Êtes-vous sûr de vouloir créer un nouveau plan ? Le plan actuel sera remplacé.')) {
-            // Réinitialiser l'état
-            currentWeeklyPlan = null;
-            selectedDays = [];
-            selectedObjectives = [];
-            selectedConstraints = [];
-            
-            // Afficher le formulaire de création
-            displayPlannerForm();
-        }
-    }
-    
-    /**
-     * Navigue vers la fonctionnalité "Quelle séance aujourd'hui?"
-     */
-    function navigateToTodaySession() {
-        window.navigation.navigateToFeature(PLAN_FEATURES.TODAY_SESSION);
-    }
-    
-    /**
-     * Exporte le plan vers le calendrier de l'utilisateur
-     */
-    function exportToCalendar() {
-        // Cette fonction serait implémentée pour exporter le plan
-        // vers Google Calendar, Apple Calendar, etc.
-        
-        // Pour l'exemple, on affiche juste un message
-        alert('Export du plan vers le calendrier en cours de développement.');
-    }
-    
-    /**
-     * Imprime le plan hebdomadaire
-     */
-    function printPlan() {
-        // Cette fonction serait implémentée pour formater le plan
-        // pour l'impression
-        
-        // Pour l'exemple, on utilise la fonction d'impression du navigateur
-        window.print();
-    }
-    
-    /**
-     * Formate une date pour l'affichage
-     * @param {string} dateString - Date au format ISO
-     * @returns {string} Date formatée
-     */
-    function formatDate(dateString) {
-        if (!dateString) return '';
-        
-        const date = new Date(dateString);
-        return date.toLocaleDateString('fr-FR', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-        });
-    }
-    
-    /**
-     * Formate une plage de dates pour l'affichage
-     * @param {string} startDateString - Date de début au format ISO
-     * @param {number} days - Nombre de jours dans la plage
-     * @returns {string} Plage de dates formatée
-     */
-    function formatDateRange(startDateString, days) {
-        if (!startDateString) return '';
-        
-        const startDate = new Date(startDateString);
-        const endDate = new Date(startDate);
-        endDate.setDate(startDate.getDate() + days - 1);
-        
-        return `${formatDate(startDate.toISOString())} au ${formatDate(endDate.toISOString())}`;
-    }
-    
-    // API publique
-    return {
-        initialize,
-        loadExistingPlan,
-        displayPlannerForm
-    };
-})();
-
-// Initialisation au chargement du document
-document.addEventListener('DOMContentLoaded', function() {
-    plannerModule.initialize();
-});
-
-// Export du module pour utilisation dans d'autres fichiers
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = plannerModule;
-}/**
+/**
  * Module de planification hebdomadaire pour l'application Bilan Vital
  * Gère la création, l'affichage et la modification du plan d'activités hebdomadaire
  */
@@ -1091,3 +866,194 @@ const plannerModule = (function() {
         // Afficher le plan mis à jour
         displayGeneratedPlan(currentWeeklyPlan);
     }
+    
+    /**
+     * Génère un nouveau plan hebdomadaire
+     */
+    function regeneratePlan() {
+        // Générer un nouveau plan avec les mêmes paramètres
+        const newPlan = generateWeeklyPlan();
+        
+        // Afficher le nouveau plan
+        displayGeneratedPlan(newPlan);
+        
+        // Mettre à jour le plan courant
+        currentWeeklyPlan = newPlan;
+    }
+    
+    /**
+     * Marque une séance comme complétée
+     * @param {number} dayIndex - Index du jour
+     */
+    async function markSessionAsCompleted(dayIndex) {
+        if (!currentWeeklyPlan) return;
+        
+        // Trouver la séance correspondante
+        const session = currentWeeklyPlan.plannedSessions.find(s => s.day === dayIndex);
+        if (!session) return;
+        
+        // Marquer comme complétée
+        session.completed = true;
+        
+        // Mettre à jour la date de dernière modification
+        currentWeeklyPlan.lastUpdated = new Date().toISOString();
+        
+        // Sauvegarder le plan mis à jour
+        try {
+            await userData.saveWeeklyPlan(currentWeeklyPlan);
+            
+            // Rafraîchir l'affichage
+            displayExistingPlan();
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour du plan:', error);
+            alert('Une erreur est survenue lors de la mise à jour du plan.');
+        }
+    }
+    
+    /**
+     * Calcule le taux d'adhérence au plan
+     * @returns {number} Taux d'adhérence (0-1)
+     */
+    function calculateAdherenceRate() {
+        if (!currentWeeklyPlan || !currentWeeklyPlan.plannedSessions.length) return 0;
+        
+        // Calculer le jour actuel de la semaine (0 = lundi, 6 = dimanche)
+        const today = new Date();
+        const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1;
+        
+        // Compter les séances passées ou du jour même
+        const pastOrTodaySessions = currentWeeklyPlan.plannedSessions.filter(s => s.day <= dayOfWeek);
+        if (!pastOrTodaySessions.length) return 1; // Aucune séance passée
+        
+        // Compter les séances complétées
+        const completedSessions = pastOrTodaySessions.filter(s => s.completed);
+        
+        // Calculer le taux d'adhérence
+        return completedSessions.length / pastOrTodaySessions.length;
+    }
+    
+    /**
+     * Retourne un message d'encouragement basé sur le taux d'adhérence
+     * @returns {string} Message d'encouragement
+     */
+    function getAdherenceMessage() {
+        const rate = calculateAdherenceRate();
+        
+        if (rate >= 0.9) {
+            return ADHERENCE_MESSAGES.EXCELLENT;
+        } else if (rate >= 0.7) {
+            return ADHERENCE_MESSAGES.VERY_GOOD;
+        } else if (rate >= 0.5) {
+            return ADHERENCE_MESSAGES.GOOD;
+        } else if (rate >= 0.3) {
+            return ADHERENCE_MESSAGES.FAIR;
+        } else {
+            return ADHERENCE_MESSAGES.POOR;
+        }
+    }
+    
+    /**
+     * Ajuste le plan hebdomadaire existant
+     */
+    function adjustPlan() {
+        if (!currentWeeklyPlan) return;
+        
+        // Utiliser la même fonction que pour personnaliser un plan
+        customizePlan();
+    }
+    
+    /**
+     * Crée un nouveau plan hebdomadaire
+     */
+    function createNewPlan() {
+        // Afficher un message de confirmation
+        if (confirm('Êtes-vous sûr de vouloir créer un nouveau plan ? Le plan actuel sera remplacé.')) {
+            // Réinitialiser l'état
+            currentWeeklyPlan = null;
+            selectedDays = [];
+            selectedObjectives = [];
+            selectedConstraints = [];
+            
+            // Afficher le formulaire de création
+            displayPlannerForm();
+        }
+    }
+    
+    /**
+     * Navigue vers la fonctionnalité "Quelle séance aujourd'hui?"
+     */
+    function navigateToTodaySession() {
+        window.navigation.navigateToFeature(PLAN_FEATURES.TODAY_SESSION);
+    }
+    
+    /**
+     * Exporte le plan vers le calendrier de l'utilisateur
+     */
+    function exportToCalendar() {
+        // Cette fonction serait implémentée pour exporter le plan
+        // vers Google Calendar, Apple Calendar, etc.
+        
+        // Pour l'exemple, on affiche juste un message
+        alert('Export du plan vers le calendrier en cours de développement.');
+    }
+    
+    /**
+     * Imprime le plan hebdomadaire
+     */
+    function printPlan() {
+        // Cette fonction serait implémentée pour formater le plan
+        // pour l'impression
+        
+        // Pour l'exemple, on utilise la fonction d'impression du navigateur
+        window.print();
+    }
+    
+    /**
+     * Formate une date pour l'affichage
+     * @param {string} dateString - Date au format ISO
+     * @returns {string} Date formatée
+     */
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        
+        const date = new Date(dateString);
+        return date.toLocaleDateString('fr-FR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+    }
+    
+    /**
+     * Formate une plage de dates pour l'affichage
+     * @param {string} startDateString - Date de début au format ISO
+     * @param {number} days - Nombre de jours dans la plage
+     * @returns {string} Plage de dates formatée
+     */
+    function formatDateRange(startDateString, days) {
+        if (!startDateString) return '';
+        
+        const startDate = new Date(startDateString);
+        const endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + days - 1);
+        
+        return `${formatDate(startDate.toISOString())} au ${formatDate(endDate.toISOString())}`;
+    }
+    
+    // API publique
+    return {
+        initialize,
+        loadExistingPlan,
+        displayPlannerForm
+    };
+})();
+
+// Initialisation au chargement du document
+document.addEventListener('DOMContentLoaded', function() {
+    plannerModule.initialize();
+});
+
+// Export du module pour utilisation dans d'autres fichiers
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = plannerModule;
+}
