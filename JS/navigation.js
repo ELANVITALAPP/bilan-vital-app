@@ -22,22 +22,32 @@ const navigation = (function() {
     let contentContainer = null;
     
     // Dépendances
-    const testsModule = window.testsModule || {};
-    const bilanModule = window.bilanModule || {};
-    const plannerModule = window.plannerModule || {};
-    const todaySessionModule = window.todaySessionModule || {};
+    let testsModule = null;
+    let bilanModule = null;
+    let plannerModule = null;
+    let todaySessionModule = null;
     
     /**
      * Initialise le module de navigation
      * @param {string} containerId - ID du conteneur principal de contenu
      */
     function initialize(containerId = 'mainContent') {
+        console.log('Initialisation du module de navigation...');
+        
         // Définir le conteneur principal
         contentContainer = document.getElementById(containerId);
         if (!contentContainer) {
             console.error(`Conteneur de contenu non trouvé: ${containerId}`);
-            return;
+            console.log('Création d\'un conteneur de contenu de secours');
+            
+            // Créer un conteneur de secours si nécessaire
+            contentContainer = document.createElement('main');
+            contentContainer.id = containerId;
+            document.body.appendChild(contentContainer);
         }
+        
+        // Charger les dépendances
+        loadDependencies();
         
         // Définir les routes
         defineRoutes();
@@ -48,9 +58,33 @@ const navigation = (function() {
         // Écouter les clics sur les liens de navigation
         document.addEventListener('click', handleNavigationClick);
         
-        // Naviguer vers la page initiale
-        const path = getPathFromUrl();
-        navigateTo(path || ROUTE_TYPES.HOME);
+        // Naviguer vers la page initiale (avec un délai pour s'assurer que tout est prêt)
+        setTimeout(() => {
+            const path = getPathFromUrl();
+            console.log('Chemin initial détecté:', path);
+            navigateTo(path || ROUTE_TYPES.HOME);
+        }, 100);
+        
+        // Log de débogage
+        console.log('Module de navigation initialisé avec succès');
+    }
+    
+    /**
+     * Charge les dépendances du module
+     */
+    function loadDependencies() {
+        // Récupération sécurisée des modules
+        if (window.testsModule) testsModule = window.testsModule;
+        if (window.bilanModule) bilanModule = window.bilanModule;
+        if (window.plannerModule) plannerModule = window.plannerModule;
+        if (window.todaySessionModule) todaySessionModule = window.todaySessionModule;
+        
+        // Log de statut des dépendances
+        console.log('Statut des dépendances du module de navigation:');
+        console.log('- testsModule:', testsModule ? 'Disponible' : 'Non disponible');
+        console.log('- bilanModule:', bilanModule ? 'Disponible' : 'Non disponible');
+        console.log('- plannerModule:', plannerModule ? 'Disponible' : 'Non disponible');
+        console.log('- todaySessionModule:', todaySessionModule ? 'Disponible' : 'Non disponible');
     }
     
     /**
@@ -64,6 +98,11 @@ const navigation = (function() {
         };
         
         // Routes des catégories
+        routes['tests'] = {
+            title: 'Tests de santé',
+            render: renderTestsPage
+        };
+        
         routes['category/:id'] = {
             title: 'Catégorie',
             render: renderCategoryPage
@@ -76,6 +115,22 @@ const navigation = (function() {
         };
         
         // Routes des fonctionnalités spéciales
+        routes['bilan'] = {
+            title: 'Bilan récapitulatif',
+            render: renderBilanPage
+        };
+        
+        routes['planification'] = {
+            title: 'Planifier ma semaine',
+            render: renderPlannerPage
+        };
+        
+        routes['seance'] = {
+            title: 'Séance du jour',
+            render: renderTodaySessionPage
+        };
+        
+        // Compatibilité avec les anciennes routes (feature/xxx)
         routes['feature/bilan'] = {
             title: 'Bilan récapitulatif',
             render: renderBilanPage
@@ -87,7 +142,7 @@ const navigation = (function() {
         };
         
         routes['feature/todaySession'] = {
-            title: 'Quelle séance aujourd\'hui?',
+            title: 'Séance du jour',
             render: renderTodaySessionPage
         };
         
@@ -108,6 +163,8 @@ const navigation = (function() {
             title: 'Page non trouvée',
             render: renderNotFoundPage
         };
+        
+        console.log('Routes définies:', Object.keys(routes));
     }
     
     /**
@@ -116,6 +173,7 @@ const navigation = (function() {
      */
     function handlePopState(event) {
         const path = getPathFromUrl();
+        console.log('Navigation popstate vers:', path);
         navigateTo(path || ROUTE_TYPES.HOME, false);
     }
     
@@ -147,13 +205,18 @@ const navigation = (function() {
         
         // Extraire le chemin
         let path = href;
+        
+        // Nettoyer le chemin
         if (path.startsWith('#/')) {
             path = path.substring(2);
+        } else if (path.startsWith('#')) {
+            path = path.substring(1);
         } else if (path.startsWith('/')) {
             path = path.substring(1);
         }
         
         // Naviguer vers la page
+        console.log('Navigation par clic vers:', path);
         navigateTo(path);
     }
     
@@ -162,8 +225,35 @@ const navigation = (function() {
      * @returns {string} Chemin de l'URL (sans le fragment #/)
      */
     function getPathFromUrl() {
-        // Utiliser la partie après le # ou la partie après le domaine
-        let path = window.location.hash.substring(2) || window.location.pathname.substring(1);
+        // Essayer d'extraire le chemin depuis différentes parties de l'URL
+        let path = '';
+        
+        // Priorité 1: Utiliser le hash (pour les SPAs)
+        if (window.location.hash) {
+            if (window.location.hash.startsWith('#/')) {
+                path = window.location.hash.substring(2);
+            } else if (window.location.hash.startsWith('#')) {
+                path = window.location.hash.substring(1);
+            }
+        } 
+        // Priorité 2: Utiliser le pathname (pour les sites sans hash)
+        else if (window.location.pathname) {
+            // Extraire uniquement la partie après le nom du dépôt
+            const parts = window.location.pathname.split('/');
+            // Si le chemin contient le nom du dépôt (bilan-vital-app), prendre ce qui suit
+            const repoIndex = parts.indexOf('bilan-vital-app');
+            if (repoIndex !== -1 && parts.length > repoIndex + 1) {
+                path = parts.slice(repoIndex + 1).join('/');
+            } else {
+                // Sinon prendre la dernière partie du chemin
+                path = parts[parts.length - 1];
+            }
+        }
+        
+        // Nettoyer le chemin (enlever index.html, etc.)
+        path = path.replace('index.html', '').replace(/\/$/, '');
+        
+        console.log('Chemin extrait de l\'URL:', path || 'home');
         
         // Si le chemin est vide, retourner 'home'
         return path || ROUTE_TYPES.HOME;
@@ -175,12 +265,15 @@ const navigation = (function() {
      * @param {boolean} pushState - Mettre à jour l'historique de navigation
      */
     function navigateTo(path, pushState = true) {
+        console.log('Tentative de navigation vers:', path);
+        
         // Enregistrer la page précédente
         previousPage = currentPage;
         
         // Trouver la route correspondante
         const route = findRoute(path);
         if (!route) {
+            console.warn(`Route non trouvée pour le chemin: ${path}`);
             // Si la route n'existe pas, afficher la page 404
             navigateTo(ROUTE_TYPES.NOT_FOUND);
             return;
@@ -198,7 +291,13 @@ const navigation = (function() {
         currentPage = path;
         
         // Afficher le contenu de la page
-        route.render(path);
+        try {
+            route.render(path);
+            console.log(`Page "${path}" rendue avec succès`);
+        } catch (error) {
+            console.error(`Erreur lors du rendu de la page "${path}":`, error);
+            renderErrorPage(error);
+        }
         
         // Faire défiler vers le haut
         window.scrollTo(0, 0);
@@ -263,79 +362,87 @@ const navigation = (function() {
     }
     
     /**
-     * Rend le contenu de la page d'accueil
+     * Affiche un message d'erreur
+     * @param {Error} error - Erreur survenue
      */
-    async function renderHomePage() {
+    function renderErrorPage(error) {
         if (!contentContainer) return;
         
-        // Récupérer les données des catégories et fonctionnalités spéciales
-        const testsData = window.testsData || {};
-        const categories = testsData.getCategories ? testsData.getCategories() : [];
-        const features = testsData.getSpecialFeatures ? testsData.getSpecialFeatures() : [];
-        
-        // Générer le HTML
         contentContainer.innerHTML = `
-            <div class="homeContainer">
-                <div class="specialFeatures">
-                    <h2>Fonctionnalités</h2>
-                    <div class="featuresGrid">
-                        ${features.map(feature => `
-                            <div class="featureCard" data-feature-id="${feature.id}" style="border-color: ${feature.color}">
-                                <div class="featureIcon" style="background-color: ${feature.color}">
-                                    <i class="icon-${feature.icon}"></i>
-                                </div>
-                                <div class="featureInfo">
-                                    <h3>${feature.name}</h3>
-                                    <p>${feature.description}</p>
-                                </div>
-                                <button class="btn btnOutline featureBtn" data-nav="feature/${feature.id}">
-                                    Accéder
-                                </button>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                
-                <div class="testCategories">
-                    <h2>Catégories de tests</h2>
-                    <div class="categoriesGrid">
-                        ${categories.map(category => `
-                            <div class="categoryCard" data-category-id="${category.id}">
-                                <div class="categoryIcon" style="background-color: ${category.color}">
-                                    <i class="icon-${category.icon}"></i>
-                                </div>
-                                <div class="categoryInfo">
-                                    <h3>${category.name}</h3>
-                                    <p>${category.description}</p>
-                                </div>
-                                <button class="btn btnOutline categoryBtn" data-nav="category/${category.id}">
-                                    Voir les tests
-                                </button>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
+            <div class="errorContainer">
+                <h1>Erreur</h1>
+                <p>Une erreur est survenue lors du chargement de la page.</p>
+                <p class="errorDetails">${error.message || 'Erreur inconnue'}</p>
+                <button class="btn btnPrimary" data-nav="home">Retour à l'accueil</button>
             </div>
         `;
+    }
+    
+    /**
+     * Rend une page d'état temporaire pour les modules manquants
+     * @param {string} title - Titre de la page
+     * @param {string} message - Message à afficher
+     */
+    function renderTemporaryPage(title, message) {
+        if (!contentContainer) return;
         
-        // Ajouter les écouteurs d'événements pour les cartes de fonctionnalités et catégories
-        document.querySelectorAll('.featureCard').forEach(card => {
-            card.addEventListener('click', (event) => {
-                if (event.target.classList.contains('btn')) return;
-                
-                const featureId = card.getAttribute('data-feature-id');
-                navigateTo(`feature/${featureId}`);
-            });
-        });
+        contentContainer.innerHTML = `
+            <section class="tempPageContainer">
+                <h2>${title}</h2>
+                <p>${message}</p>
+                <p class="fallback-message">Cette section est en cours de développement. Elle sera pleinement fonctionnelle très bientôt.</p>
+                <div class="navigationButtons">
+                    <button class="btn btnOutline" data-nav="home">Retour à l'accueil</button>
+                </div>
+            </section>
+        `;
+    }
+    
+    /**
+     * Rend le contenu de la page d'accueil
+     */
+    function renderHomePage() {
+        if (!contentContainer) return;
         
-        document.querySelectorAll('.categoryCard').forEach(card => {
-            card.addEventListener('click', (event) => {
-                if (event.target.classList.contains('btn')) return;
-                
-                const categoryId = card.getAttribute('data-category-id');
-                navigateTo(`category/${categoryId}`);
-            });
-        });
+        contentContainer.innerHTML = `
+            <section class="welcome">
+                <h2>Bienvenue sur l'application Bilan Vital</h2>
+                <p>Évaluez votre santé et votre bien-être avec des tests personnalisés et recevez des recommandations adaptées.</p>
+            </section>
+            
+            <section id="features-section">
+                <h2>Fonctionnalités principales</h2>
+                <div class="features-grid">
+                    <div class="feature-card" data-nav="tests">
+                        <h3>Tests de santé</h3>
+                        <p>Évaluez votre condition physique, mentale et émotionnelle grâce à nos tests personnalisés.</p>
+                        <button class="btn" data-nav="tests">Découvrir</button>
+                    </div>
+                    <div class="feature-card" data-nav="bilan">
+                        <h3>Bilan personnel</h3>
+                        <p>Consultez le récapitulatif de vos résultats et suivez votre progression dans le temps.</p>
+                        <button class="btn" data-nav="bilan">Découvrir</button>
+                    </div>
+                    <div class="feature-card" data-nav="planification">
+                        <h3>Planification</h3>
+                        <p>Planifiez vos activités hebdomadaires en fonction de vos objectifs et disponibilités.</p>
+                        <button class="btn" data-nav="planification">Découvrir</button>
+                    </div>
+                    <div class="feature-card" data-nav="seance">
+                        <h3>Séance du jour</h3>
+                        <p>Recevez des recommandations adaptées à votre état du jour et à vos objectifs.</p>
+                        <button class="btn" data-nav="seance">Découvrir</button>
+                    </div>
+                </div>
+            </section>
+        `;
+    }
+    
+    /**
+     * Rend la page principale des tests
+     */
+    function renderTestsPage() {
+        renderTemporaryPage("Tests de santé", "Accédez à différents tests pour évaluer votre condition physique et mentale.");
     }
     
     /**
@@ -349,6 +456,15 @@ const navigation = (function() {
         const params = extractParams('category/:id', path);
         const categoryId = params.id;
         
+        // Si le module de tests n'est pas disponible, afficher une page temporaire
+        if (!testsModule || !testsModule.loadCategory) {
+            renderTemporaryPage(
+                "Catégorie de tests", 
+                `Cette catégorie de tests vous permettra d'évaluer différents aspects de votre santé et bien-être.`
+            );
+            return;
+        }
+        
         // Préparer le conteneur pour la catégorie
         contentContainer.innerHTML = `
             <div id="categoryContainer">
@@ -360,17 +476,7 @@ const navigation = (function() {
         `;
         
         // Utiliser le module de tests pour charger la catégorie
-        if (testsModule && testsModule.loadCategory) {
-            testsModule.loadCategory(categoryId);
-        } else {
-            contentContainer.innerHTML = `
-                <div class="errorContainer">
-                    <h1>Erreur</h1>
-                    <p>Impossible de charger la catégorie. Le module de tests n'est pas disponible.</p>
-                    <button class="btn btnPrimary" data-nav="home">Retour à l'accueil</button>
-                </div>
-            `;
-        }
+        testsModule.loadCategory(categoryId);
     }
     
     /**
@@ -384,6 +490,15 @@ const navigation = (function() {
         const params = extractParams('test/:id', path);
         const testId = params.id;
         
+        // Si le module de tests n'est pas disponible, afficher une page temporaire
+        if (!testsModule || !testsModule.startTest) {
+            renderTemporaryPage(
+                "Test spécifique", 
+                `Ce test vous permettra d'évaluer un aspect spécifique de votre santé et bien-être.`
+            );
+            return;
+        }
+        
         // Préparer le conteneur pour le test
         contentContainer.innerHTML = `
             <div id="testContainer">
@@ -395,17 +510,7 @@ const navigation = (function() {
         `;
         
         // Utiliser le module de tests pour démarrer le test
-        if (testsModule && testsModule.startTest) {
-            testsModule.startTest(testId);
-        } else {
-            contentContainer.innerHTML = `
-                <div class="errorContainer">
-                    <h1>Erreur</h1>
-                    <p>Impossible de charger le test. Le module de tests n'est pas disponible.</p>
-                    <button class="btn btnPrimary" data-nav="home">Retour à l'accueil</button>
-                </div>
-            `;
-        }
+        testsModule.startTest(testId);
     }
     
     /**
@@ -413,6 +518,15 @@ const navigation = (function() {
      */
     function renderBilanPage() {
         if (!contentContainer) return;
+        
+        // Si le module de bilan n'est pas disponible, afficher une page temporaire
+        if (!bilanModule || !bilanModule.loadBilan) {
+            renderTemporaryPage(
+                "Bilan récapitulatif", 
+                "Cette section vous permettra bientôt de consulter le récapitulatif de vos résultats et de votre progression."
+            );
+            return;
+        }
         
         // Préparer le conteneur pour le bilan
         contentContainer.innerHTML = `
@@ -425,17 +539,7 @@ const navigation = (function() {
         `;
         
         // Utiliser le module de bilan pour charger le bilan
-        if (bilanModule && bilanModule.loadBilan) {
-            bilanModule.loadBilan();
-        } else {
-            contentContainer.innerHTML = `
-                <div class="errorContainer">
-                    <h1>Erreur</h1>
-                    <p>Impossible de charger le bilan. Le module de bilan n'est pas disponible.</p>
-                    <button class="btn btnPrimary" data-nav="home">Retour à l'accueil</button>
-                </div>
-            `;
-        }
+        bilanModule.loadBilan();
     }
     
     /**
@@ -443,6 +547,15 @@ const navigation = (function() {
      */
     function renderPlannerPage() {
         if (!contentContainer) return;
+        
+        // Si le module de planification n'est pas disponible, afficher une page temporaire
+        if (!plannerModule || !plannerModule.loadExistingPlan) {
+            renderTemporaryPage(
+                "Planification hebdomadaire", 
+                "Cette section vous permettra bientôt de planifier vos activités hebdomadaires en fonction de vos objectifs."
+            );
+            return;
+        }
         
         // Préparer le conteneur pour le planificateur
         contentContainer.innerHTML = `
@@ -455,17 +568,7 @@ const navigation = (function() {
         `;
         
         // Utiliser le module de planification pour charger le planificateur
-        if (plannerModule && plannerModule.loadExistingPlan) {
-            plannerModule.loadExistingPlan();
-        } else {
-            contentContainer.innerHTML = `
-                <div class="errorContainer">
-                    <h1>Erreur</h1>
-                    <p>Impossible de charger le planificateur. Le module de planification n'est pas disponible.</p>
-                    <button class="btn btnPrimary" data-nav="home">Retour à l'accueil</button>
-                </div>
-            `;
-        }
+        plannerModule.loadExistingPlan();
     }
     
     /**
@@ -473,6 +576,15 @@ const navigation = (function() {
      */
     function renderTodaySessionPage() {
         if (!contentContainer) return;
+        
+        // Si le module de recommandation quotidienne n'est pas disponible, afficher une page temporaire
+        if (!todaySessionModule || !todaySessionModule.loadExistingEvaluation) {
+            renderTemporaryPage(
+                "Séance du jour", 
+                "Cette section vous proposera bientôt des séances quotidiennes adaptées à votre profil."
+            );
+            return;
+        }
         
         // Préparer le conteneur pour la recommandation quotidienne
         contentContainer.innerHTML = `
@@ -485,47 +597,21 @@ const navigation = (function() {
         `;
         
         // Utiliser le module de recommandation quotidienne
-        if (todaySessionModule && todaySessionModule.loadExistingEvaluation) {
-            todaySessionModule.loadExistingEvaluation();
-        } else {
-            contentContainer.innerHTML = `
-                <div class="errorContainer">
-                    <h1>Erreur</h1>
-                    <p>Impossible de charger la recommandation quotidienne. Le module n'est pas disponible.</p>
-                    <button class="btn btnPrimary" data-nav="home">Retour à l'accueil</button>
-                </div>
-            `;
-        }
+        todaySessionModule.loadExistingEvaluation();
     }
     
     /**
      * Rend la page de paramètres
      */
     function renderSettingsPage() {
-        if (!contentContainer) return;
-        
-        contentContainer.innerHTML = `
-            <div class="settingsContainer">
-                <h1>Paramètres</h1>
-                <p>Cette page est en cours de développement.</p>
-                <button class="btn btnPrimary" data-nav="home">Retour à l'accueil</button>
-            </div>
-        `;
+        renderTemporaryPage("Paramètres", "Personnalisez votre expérience avec Bilan Vital.");
     }
     
     /**
      * Rend la page de profil utilisateur
      */
     function renderProfilePage() {
-        if (!contentContainer) return;
-        
-        contentContainer.innerHTML = `
-            <div class="profileContainer">
-                <h1>Mon profil</h1>
-                <p>Cette page est en cours de développement.</p>
-                <button class="btn btnPrimary" data-nav="home">Retour à l'accueil</button>
-            </div>
-        `;
+        renderTemporaryPage("Mon profil", "Consultez et modifiez vos informations personnelles.");
     }
     
     /**
@@ -600,6 +686,7 @@ const navigation = (function() {
 // Initialisation au chargement du document
 document.addEventListener('DOMContentLoaded', function() {
     navigation.initialize();
+    console.log('Navigation initialisée au chargement du document');
 });
 
 // Export du module
