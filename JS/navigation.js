@@ -178,6 +178,17 @@ const navigation = (function() {
     }
     
     /**
+     * Vérifie si un élément est un nœud DOM valide avec les méthodes attendues
+     * @param {*} element - Élément à vérifier
+     * @returns {boolean} Vrai si l'élément est un nœud DOM valide
+     */
+    function isValidElement(element) {
+        return element && typeof element === 'object' && 
+               typeof element.hasAttribute === 'function' &&
+               typeof element.getAttribute === 'function';
+    }
+    
+    /**
      * Gère les clics sur les liens de navigation
      * @param {Event} event - Événement de clic
      */
@@ -185,39 +196,52 @@ const navigation = (function() {
         // Vérifier si le clic est sur un élément de navigation
         let target = event.target;
         
+        // Vérifier si l'élément target est valide
+        if (!isValidElement(target)) return;
+        
         // Remonter jusqu'au lien si le clic est sur un élément enfant
-        while (target && target.tagName !== 'A' && !target.hasAttribute('data-nav')) {
-            target = target.parentNode;
-            if (!target || target === document.body) return;
+        try {
+            while (target && 
+                  target.tagName !== 'A' && 
+                  !target.hasAttribute('data-nav')) {
+                target = target.parentNode;
+                // Vérifier que le parent est un élément DOM valide
+                if (!isValidElement(target) || target === document.body) return;
+            }
+            
+            // Vérifier à nouveau si target est valide et a les attributs nécessaires
+            if (!isValidElement(target)) return;
+            
+            // Ignorer si ce n'est pas un élément de navigation
+            if (!(target.hasAttribute('href') || target.hasAttribute('data-nav'))) return;
+            
+            // Récupérer la destination
+            const href = target.getAttribute('data-nav') || target.getAttribute('href');
+            
+            // Ignorer les liens externes et les liens sans href
+            if (!href || href.startsWith('http') || href.startsWith('mailto:')) return;
+            
+            // Empêcher le comportement par défaut
+            event.preventDefault();
+            
+            // Extraire le chemin
+            let path = href;
+            
+            // Nettoyer le chemin
+            if (path.startsWith('#/')) {
+                path = path.substring(2);
+            } else if (path.startsWith('#')) {
+                path = path.substring(1);
+            } else if (path.startsWith('/')) {
+                path = path.substring(1);
+            }
+            
+            // Naviguer vers la page
+            console.log('Navigation par clic vers:', path);
+            navigateTo(path);
+        } catch (error) {
+            console.error('Erreur lors de la gestion du clic de navigation:', error);
         }
-        
-        // Ignorer si ce n'est pas un élément de navigation
-        if (!target || !(target.hasAttribute('href') || target.hasAttribute('data-nav'))) return;
-        
-        // Récupérer la destination
-        const href = target.getAttribute('data-nav') || target.getAttribute('href');
-        
-        // Ignorer les liens externes et les liens sans href
-        if (!href || href.startsWith('http') || href.startsWith('mailto:')) return;
-        
-        // Empêcher le comportement par défaut
-        event.preventDefault();
-        
-        // Extraire le chemin
-        let path = href;
-        
-        // Nettoyer le chemin
-        if (path.startsWith('#/')) {
-            path = path.substring(2);
-        } else if (path.startsWith('#')) {
-            path = path.substring(1);
-        } else if (path.startsWith('/')) {
-            path = path.substring(1);
-        }
-        
-        // Naviguer vers la page
-        console.log('Navigation par clic vers:', path);
-        navigateTo(path);
     }
     
     /**
