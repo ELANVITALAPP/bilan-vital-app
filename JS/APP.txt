@@ -1,0 +1,209 @@
+/**
+ * Point d'entrée principal de l'application Bilan Vital
+ * Gère l'initialisation et la configuration globale
+ */
+
+const app = (function() {
+    // Configuration de l'application (constante globale)
+    const APP_CONFIG = {
+        appName: 'Bilan Vital',
+        version: '1.0.0',
+        apiEndpoint: null, // Pas d'API externe pour l'instant
+        debug: false,
+        theme: 'light'
+    };
+    
+    // État de l'application (variables qui changent)
+    let isInitialized = false;
+    let userAuthenticated = false;
+    let userProfile = null;
+    
+    /**
+     * Initialise l'application
+     * @returns {Promise<boolean>} Succès de l'initialisation
+     */
+    async function initialize() {
+        if (isInitialized) {
+            console.warn('L\'application est déjà initialisée');
+            return true;
+        }
+        
+        try {
+            // Afficher le message de chargement
+            showLoadingScreen('Initialisation de l\'application...');
+            
+            // Vérifier la compatibilité du navigateur
+            if (!checkBrowserCompatibility()) {
+                showError('Votre navigateur n\'est pas compatible avec cette application. Veuillez utiliser une version récente de Chrome, Firefox, Safari ou Edge.');
+                return false;
+            }
+            
+            // Initialiser les modules principaux
+            initializeModules();
+            
+            // Vérifier l'authentification
+            userAuthenticated = await checkAuthentication();
+            
+            // Si l'utilisateur est authentifié, charger son profil
+            if (userAuthenticated) {
+                userProfile = await loadUserProfile();
+            }
+            
+            // Charger les préférences de l'utilisateur
+            loadUserPreferences();
+            
+            // Initialiser l'interface utilisateur
+            initializeUI();
+            
+            // Définir l'application comme initialisée
+            isInitialized = true;
+            
+            // Masquer le message de chargement
+            hideLoadingScreen();
+            
+            // Déclencher l'événement d'initialisation
+            document.dispatchEvent(new CustomEvent('app:initialized'));
+            
+            return true;
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation de l\'application:', error);
+            showError('Une erreur est survenue lors de l\'initialisation de l\'application. Veuillez réessayer.');
+            
+            return false;
+        }
+    }
+    
+    /**
+     * Vérifie la compatibilité du navigateur
+     * @returns {boolean} Navigateur compatible
+     */
+    function checkBrowserCompatibility() {
+        // Vérifier les fonctionnalités essentielles
+        const REQUIRED_FEATURES = [
+            'Promise' in window,
+            'localStorage' in window,
+            'fetch' in window,
+            'CustomEvent' in window
+        ];
+        
+        return REQUIRED_FEATURES.every(feature => feature === true);
+    }
+    
+    /**
+     * Initialise les modules principaux de l'application
+     */
+    function initializeModules() {
+        // Modules utilitaires
+        try {
+            // S'assurer que les modules sont disponibles
+            if (!window.helpers) {
+                console.warn('Module helpers non disponible');
+            }
+            
+            if (!window.storage) {
+                console.warn('Module storage non disponible');
+            }
+            
+            if (!window.charts) {
+                console.warn('Module charts non disponible');
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation des modules utilitaires:', error);
+        }
+        
+        // Modules de données
+        try {
+            if (!window.testsData) {
+                console.warn('Module testsData non disponible');
+            }
+            
+            if (!window.userData) {
+                console.warn('Module userData non disponible');
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation des modules de données:', error);
+        }
+        
+        // Modules de fonctionnalités
+        try {
+            if (!window.testsModule) {
+                console.warn('Module testsModule non disponible');
+            }
+            
+            if (!window.bilanModule) {
+                console.warn('Module bilanModule non disponible');
+            }
+            
+            if (!window.plannerModule) {
+                console.warn('Module plannerModule non disponible');
+            }
+            
+            if (!window.todaySessionModule) {
+                console.warn('Module todaySessionModule non disponible');
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation des modules de fonctionnalités:', error);
+        }
+        
+        // Module de navigation
+        try {
+            if (!window.navigation) {
+                console.warn('Module navigation non disponible');
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation du module de navigation:', error);
+        }
+    }
+    
+    /**
+     * Vérifie si l'utilisateur est authentifié
+     * @returns {Promise<boolean>} Utilisateur authentifié
+     */
+    async function checkAuthentication() {
+        // Dans un contexte réel, vérifierait l'authentification avec le service d'authentification de GoodBarber
+        
+        return new Promise(resolve => {
+            // Simuler un délai d'authentification
+            setTimeout(() => {
+                // Vérifier si l'URL contient un paramètre d'authentification
+                const urlParams = new URLSearchParams(window.location.search);
+                const authToken = urlParams.get('auth_token');
+                
+                if (authToken) {
+                    // Stocker le token d'authentification
+                    localStorage.setItem('auth_token', authToken);
+                    resolve(true);
+                } else {
+                    // Vérifier si un token existe déjà en localStorage
+                    const existingToken = localStorage.getItem('auth_token');
+                    resolve(!!existingToken);
+                }
+            }, 500);
+        });
+    }
+    
+    // Le reste du code de app.js reste en camelCase car il contient principalement des fonctions et des variables qui changent...
+    
+    // API publique
+    return {
+        initialize,
+        config: APP_CONFIG, // Renommé mais garde la même clé dans l'API
+        logout,
+        showError,
+        setTheme,
+        isAuthenticated: () => userAuthenticated,
+        getUserProfile: () => userProfile
+    };
+})();
+
+// Initialiser l'application au chargement du document
+document.addEventListener('DOMContentLoaded', function() {
+    app.initialize().then(success => {
+        if (!success) {
+            console.error('L\'initialisation de l\'application a échoué');
+        }
+    });
+});
+
+// Export global
+window.app = app;
