@@ -9,10 +9,10 @@
         console.log('Répertoire de base:', window.location.href);
         console.log('Chemin complet:', window.location.pathname);
     </script>
-    <!-- Fichiers CSS externes -->
-    <link rel="stylesheet" href="./CSS/variables.css">
-    <link rel="stylesheet" href="./CSS/style.css">
-    <link rel="stylesheet" href="./CSS/responsive.css">
+    <!-- Fichiers CSS externes avec chemins absolus -->
+    <link rel="stylesheet" href="/bilan-vital-app/CSS/variables.css">
+    <link rel="stylesheet" href="/bilan-vital-app/CSS/style.css">
+    <link rel="stylesheet" href="/bilan-vital-app/CSS/responsive.css">
     <!-- Styles de base (conservés en cas de problème avec les CSS externes) -->
     <style>
         /* Réinitialisation de base */
@@ -204,23 +204,23 @@
         });
     </script>
 
-    <!-- Utilitaires - chemins corrigés -->
-    <script src="./JS/utilitaires/helpers.js" onload="scriptLoaded('helpers.js')"></script>
-    <script src="./JS/utilitaires/stockage.js" onload="scriptLoaded('stockage.js')"></script>
-    <script src="./JS/utilitaires/charts.js" onload="scriptLoaded('charts.js')"></script>
+    <!-- Utilitaires - chemins absolus -->
+    <script src="/bilan-vital-app/JS/utilitaires/helpers.js" onload="scriptLoaded('helpers.js')"></script>
+    <script src="/bilan-vital-app/JS/utilitaires/stockage.js" onload="scriptLoaded('stockage.js')"></script>
+    <script src="/bilan-vital-app/JS/utilitaires/charts.js" onload="scriptLoaded('charts.js')"></script>
 
-    <!-- Données - chemins corrigés -->
-    <script src="./JS/data/testsData.js" onload="scriptLoaded('testsData.js')"></script>
-    <script src="./JS/data/userData.js" onload="scriptLoaded('userData.js')"></script>
+    <!-- Données - chemins absolus -->
+    <script src="/bilan-vital-app/JS/data/testsData.js" onload="scriptLoaded('testsData.js')"></script>
+    <script src="/bilan-vital-app/JS/data/userData.js" onload="scriptLoaded('userData.js')"></script>
 
-    <!-- Composants - chemins corrigés -->
-    <script src="./JS/components/tests.js" onload="scriptLoaded('tests.js')"></script>
-    <script src="./JS/components/bilan.js" onload="scriptLoaded('bilan.js')"></script>
-    <script src="./JS/components/planner.js" onload="scriptLoaded('planner.js')"></script>
-    <script src="./JS/components/todaySession.js" onload="scriptLoaded('todaySession.js')"></script>
+    <!-- Composants - chemins absolus -->
+    <script src="/bilan-vital-app/JS/components/tests.js" onload="scriptLoaded('tests.js')"></script>
+    <script src="/bilan-vital-app/JS/components/bilan.js" onload="scriptLoaded('bilan.js')"></script>
+    <script src="/bilan-vital-app/JS/components/planner.js" onload="scriptLoaded('planner.js')"></script>
+    <script src="/bilan-vital-app/JS/components/todaySession.js" onload="scriptLoaded('todaySession.js')"></script>
 
-    <!-- Navigation et application principale - chemins corrigés -->
-    <script src="./JS/navigation.js" onload="scriptLoaded('navigation.js')"></script>
-    <script src="./JS/utilitaires/app.js" onload="scriptLoaded('app.js')"></script>
+    <!-- Navigation et application principale - chemins absolus -->
+    <script src="/bilan-vital-app/JS/navigation.js" onload="scriptLoaded('navigation.js')"></script>
+    <script src="/bilan-vital-app/JS/utilitaires/app.js" onload="scriptLoaded('app.js')"></script>
 </body>
 </html>
