@@ -4,11 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bilan Vital</title>
-    <!-- Fichiers CSS externes - chemins corrigés avec ./ -->
+    <!-- Script de diagnostic pour identifier les problèmes de chemin -->
+    <script>
+        console.log('Répertoire de base:', window.location.href);
+        console.log('Chemin complet:', window.location.pathname);
+    </script>
+    <!-- Fichiers CSS externes -->
     <link rel="stylesheet" href="./CSS/variables.css">
     <link rel="stylesheet" href="./CSS/style.css">
     <link rel="stylesheet" href="./CSS/responsive.css">
-    <link rel="stylesheet" href="./CSS/postcss.css">
     <!-- Styles de base (conservés en cas de problème avec les CSS externes) -->
     <style>
         /* Réinitialisation de base */
