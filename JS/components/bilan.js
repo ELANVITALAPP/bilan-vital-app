@@ -73,6 +73,7 @@ const bilanModule = (function() {
     function initialize() {
         // Écouter les événements de navigation pour réinitialiser la vue si nécessaire
         document.addEventListener('navigation:change', handleNavigationChange);
+        console.log("Module bilan initialisé");
     }
     
     /**
@@ -699,6 +700,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Export du module pour utilisation dans d'autres fichiers
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = bilanModule;
-}
+window.bilanModule = bilanModule;
