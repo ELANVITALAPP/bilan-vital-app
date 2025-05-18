@@ -53,6 +53,7 @@ const plannerModule = (function() {
     function initialize() {
         // Écouter les événements de navigation pour charger le plan si nécessaire
         document.addEventListener('navigation:change', handleNavigationChange);
+        console.log("Module planner initialisé");
     }
     
     /**
@@ -1054,6 +1055,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Export du module pour utilisation dans d'autres fichiers
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = plannerModule;
-}
+window.plannerModule = plannerModule;
