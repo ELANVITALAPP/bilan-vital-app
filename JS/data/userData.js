@@ -1,378 +1,517 @@
 /**
- * Gestion des données utilisateur pour l'application Bilan Vital
- * Ce module gère le stockage, la récupération et la mise à jour des données
- * utilisateur, y compris les résultats des tests, les préférences, et le suivi de progression.
+ * Point d'entrée principal de l'application Bilan Vital
+ * Gère l'initialisation et la configuration globale
  */
 
-// Constantes globales en SCREAMING_SNAKE_CASE
-const DAYS_OF_WEEK = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
-const ACTIVITY_TYPES = ['Cardio', 'Force', 'Souplesse', 'Équilibre', 'Récupération'];
-const SOCIAL_PREFERENCES = ['Seul', 'En groupe', 'Les deux'];
-const TIME_PREFERENCES = ['Matin', 'Midi', 'Après-midi', 'Soir'];
-const OBJECTIVES_LIST = ['Perte de poids', 'Gain musculaire', 'Amélioration cardio', 'Bien-être général', 'Réduction stress'];
-const STORAGE_KEYS = {
-    USER_PROFILE: 'user_profile',
-    TEST_RESULTS: 'test_results',
-    DAILY_STATE: 'daily_state',
-    WEEKLY_PLAN: 'weekly_plan'
-};
-
-const userData = (function() {
-    // Référence aux constantes globales
-    const STORE_TYPES = STORAGE_KEYS;
-
-    // Dépendances
-    const storageManager = window.storage || {
-        // Implémentation de fallback si le module de stockage n'est pas chargé
-        STORES: STORE_TYPES,
-        save: (key, data) => {
-            return new Promise((resolve) => {
-                localStorage.setItem(key, JSON.stringify(data));
-                resolve();
-            });
-        },
-        get: (key) => {
-            return new Promise((resolve) => {
-                const data = localStorage.getItem(key);
-                resolve(data ? JSON.parse(data) : null);
-            });
-        },
-        getByIndex: (store, indexName, value) => {
-            return new Promise((resolve) => {
-                const allData = localStorage.getItem(store);
-                if (!allData) return resolve([]);
-                
-                const parsedData = JSON.parse(allData);
-                if (!Array.isArray(parsedData)) return resolve([]);
-                
-                const filtered = parsedData.filter(item => item[indexName] === value);
-                resolve(filtered);
-            });
-        },
-        clear: (store) => {
-            return new Promise((resolve) => {
-                localStorage.removeItem(store);
-                resolve();
-            });
-        }
+const app = (function() {
+    // Configuration de l'application (constante globale)
+    const APP_CONFIG = {
+        appName: 'Bilan Vital',
+        version: '1.0.0',
+        apiEndpoint: null, // Pas d'API externe pour l'instant
+        debug: false,
+        theme: 'light'
     };
     
-    /**
-     * Structure de base pour un profil utilisateur
-     * @returns {Object} Profil utilisateur par défaut
-     */
-    function createDefaultUserProfile() {
-        return {
-            userId: generateUserId(),
-            demographics: {
-                age: null,
-                gender: null,
-                height: null,
-                weight: null
-            },
-            objectives: [],
-            preferences: {
-                activityTypes: [],
-                preferredTime: null,
-                socialPreference: null
-            },
-            dailyState: {
-                lastUpdated: null,
-                physicalScore: null,
-                mentalScore: null,
-                recommendedActivityType: null
-            },
-            weeklyPlan: {
-                lastUpdated: null,
-                availableDays: [],
-                weeklyGoals: [],
-                plannedSessions: []
-            },
-            createdAt: new Date().toISOString(),
-            lastUpdated: new Date().toISOString()
-        };
-    }
+    // État de l'application (variables qui changent)
+    let isInitialized = false;
+    let userAuthenticated = false;
+    let userProfile = null;
     
     /**
-     * Génère un identifiant utilisateur unique
-     * @returns {string} UUID v4
+     * Initialise l'application
+     * @returns {Promise<boolean>} Succès de l'initialisation
      */
-    function generateUserId() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            const r = Math.random() * 16 | 0;
-            const v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    }
-    
-    /**
-     * Initialise ou récupère le profil utilisateur
-     * @returns {Promise<Object>} Profil utilisateur
-     */
-    async function getUserProfile() {
-        try {
-            // Tenter de récupérer le profil existant
-            const profile = await storageManager.get(storageManager.STORES.USER_PROFILE, 'current');
-            
-            // Si le profil existe, le retourner
-            if (profile) {
-                return profile;
-            }
-            
-            // Sinon, créer un nouveau profil
-            const newProfile = createDefaultUserProfile();
-            newProfile.userId = 'current'; // Utiliser 'current' comme ID pour simplifier
-            
-            // Sauvegarder le nouveau profil
-            await storageManager.save(storageManager.STORES.USER_PROFILE, newProfile);
-            
-            return newProfile;
-        } catch (error) {
-            console.error('Erreur lors de la récupération du profil utilisateur:', error);
-            
-            // En cas d'erreur, retourner un profil par défaut sans le sauvegarder
-            return createDefaultUserProfile();
+    async function initialize() {
+        if (isInitialized) {
+            console.warn('L\'application est déjà initialisée');
+            return true;
         }
-    }
-    
-    /**
-     * Met à jour le profil utilisateur
-     * @param {Object} updates - Mises à jour à appliquer au profil
-     * @returns {Promise<Object>} Profil mis à jour
-     */
-    async function updateUserProfile(updates) {
-        try {
-            // Récupérer le profil existant
-            const profile = await getUserProfile();
-            
-            // Appliquer les mises à jour
-            const updatedProfile = {
-                ...profile,
-                ...updates,
-                lastUpdated: new Date().toISOString()
-            };
-            
-            // Sauvegarder le profil mis à jour
-            await storageManager.save(storageManager.STORES.USER_PROFILE, updatedProfile);
-            
-            return updatedProfile;
-        } catch (error) {
-            console.error('Erreur lors de la mise à jour du profil utilisateur:', error);
-            throw error;
-        }
-    }
-    
-    /**
-     * Récupère les résultats de tests d'un utilisateur
-     * @param {string} testId - ID du test (optionnel)
-     * @returns {Promise<Array>} Résultats des tests
-     */
-    async function getTestResults(testId = null) {
-        try {
-            // Récupérer tous les résultats
-            const results = await storageManager.get(storageManager.STORES.TEST_RESULTS) || [];
-            
-            // Si aucun ID de test n'est spécifié, retourner tous les résultats
-            if (!testId) {
-                return results;
-            }
-            
-            // Sinon, filtrer les résultats pour ce test
-            return results.filter(result => result.testId === testId);
-        } catch (error) {
-            console.error('Erreur lors de la récupération des résultats de tests:', error);
-            return [];
-        }
-    }
-    
-    /**
-     * Sauvegarde un résultat de test
-     * @param {string} testId - ID du test
-     * @param {Object} results - Résultats du test
-     * @returns {Promise<Object>} Résultats sauvegardés
-     */
-    async function saveTestResult(testId, results) {
-        try {
-            // Récupérer les résultats existants
-            const existingResults = await getTestResults();
-            
-            // Créer le nouvel enregistrement de résultat
-            const newResult = {
-                ...results,
-                testId,
-                id: generateUserId(), // Générer un ID unique pour ce résultat
-                completedAt: results.completedAt || new Date().toISOString()
-            };
-            
-            // Ajouter le nouveau résultat
-            existingResults.push(newResult);
-            
-            // Sauvegarder tous les résultats
-            await storageManager.save(storageManager.STORES.TEST_RESULTS, existingResults);
-            
-            return newResult;
-        } catch (error) {
-            console.error('Erreur lors de la sauvegarde du résultat de test:', error);
-            throw error;
-        }
-    }
-    
-    /**
-     * Récupère l'état quotidien le plus récent
-     * @returns {Promise<Object>} État quotidien
-     */
-    async function getDailyState() {
-        try {
-            const dailyState = await storageManager.get(storageManager.STORES.DAILY_STATE);
-            
-            // Vérifier si l'état quotidien existe et s'il est encore valide pour aujourd'hui
-            if (dailyState && isToday(new Date(dailyState.date))) {
-                return dailyState;
-            }
-            
-            return null;
-        } catch (error) {
-            console.error('Erreur lors de la récupération de l\'état quotidien:', error);
-            return null;
-        }
-    }
-    
-    /**
-     * Sauvegarde l'état quotidien
-     * @param {Object} state - État quotidien à sauvegarder
-     * @returns {Promise<Object>} État quotidien sauvegardé
-     */
-    async function saveDailyState(state) {
-        try {
-            // S'assurer que la date est définie
-            if (!state.date) {
-                state.date = new Date().toISOString();
-            }
-            
-            // Sauvegarder l'état
-            await storageManager.save(storageManager.STORES.DAILY_STATE, state);
-            
-            return state;
-        } catch (error) {
-            console.error('Erreur lors de la sauvegarde de l\'état quotidien:', error);
-            throw error;
-        }
-    }
-    
-    /**
-     * Récupère le plan hebdomadaire actuel
-     * @returns {Promise<Object>} Plan hebdomadaire
-     */
-    async function getWeeklyPlan() {
-        try {
-            return await storageManager.get(storageManager.STORES.WEEKLY_PLAN);
-        } catch (error) {
-            console.error('Erreur lors de la récupération du plan hebdomadaire:', error);
-            return null;
-        }
-    }
-    
-    /**
-     * Sauvegarde un plan hebdomadaire
-     * @param {Object} plan - Plan hebdomadaire à sauvegarder
-     * @returns {Promise<Object>} Plan hebdomadaire sauvegardé
-     */
-    async function saveWeeklyPlan(plan) {
-        try {
-            // S'assurer que les dates sont définies
-            if (!plan.startDate) {
-                plan.startDate = new Date().toISOString();
-            }
-            
-            plan.lastUpdated = new Date().toISOString();
-            
-            // Sauvegarder le plan
-            await storageManager.save(storageManager.STORES.WEEKLY_PLAN, plan);
-            
-            // Mettre à jour le profil utilisateur avec les informations du plan
-            await updateUserProfile({
-                weeklyPlan: {
-                    lastUpdated: plan.lastUpdated,
-                    availableDays: plan.availableDays,
-                    weeklyGoals: plan.weeklyGoals,
-                    plannedSessions: plan.plannedSessions.length
-                }
-            });
-            
-            return plan;
-        } catch (error) {
-            console.error('Erreur lors de la sauvegarde du plan hebdomadaire:', error);
-            throw error;
-        }
-    }
-    
-    /**
-     * Vérifie si un plan hebdomadaire est toujours actif
-     * @param {Object} plan - Plan hebdomadaire à vérifier
-     * @returns {boolean} True si le plan est actif
-     */
-    function isWeeklyPlanActive(plan) {
-        if (!plan || !plan.startDate) return false;
         
-        // Calculer la date de fin (7 jours après le début)
-        const startDate = new Date(plan.startDate);
-        const endDate = new Date(startDate);
-        endDate.setDate(startDate.getDate() + 7);
-        
-        // Vérifier si aujourd'hui est dans la plage du plan
-        const today = new Date();
-        return today >= startDate && today <= endDate;
-    }
-    
-    /**
-     * Vérifie si une date est aujourd'hui
-     * @param {Date} date - Date à vérifier
-     * @returns {boolean} True si la date est aujourd'hui
-     */
-    function isToday(date) {
-        const today = new Date();
-        return date.getDate() === today.getDate() &&
-               date.getMonth() === today.getMonth() &&
-               date.getFullYear() === today.getFullYear();
-    }
-    
-    /**
-     * Efface toutes les données utilisateur
-     * @returns {Promise<boolean>} Succès de l'opération
-     */
-    async function clearAllUserData() {
         try {
-            // Effacer toutes les données
-            await storageManager.clear(storageManager.STORES.USER_PROFILE);
-            await storageManager.clear(storageManager.STORES.TEST_RESULTS);
-            await storageManager.clear(storageManager.STORES.DAILY_STATE);
-            await storageManager.clear(storageManager.STORES.WEEKLY_PLAN);
+            // Afficher le message de chargement
+            showLoadingScreen('Initialisation de l\'application...');
+            
+            // Vérifier la compatibilité du navigateur
+            if (!checkBrowserCompatibility()) {
+                showError('Votre navigateur n\'est pas compatible avec cette application. Veuillez utiliser une version récente de Chrome, Firefox, Safari ou Edge.');
+                return false;
+            }
+            
+            // Initialiser les modules principaux
+            initializeModules();
+            
+            // Vérifier l'authentification
+            userAuthenticated = await checkAuthentication();
+            
+            // Si l'utilisateur est authentifié, charger son profil
+            if (userAuthenticated) {
+                userProfile = await loadUserProfile();
+            }
+            
+            // Charger les préférences de l'utilisateur
+            loadUserPreferences();
+            
+            // Initialiser l'interface utilisateur
+            initializeUI();
+            
+            // Définir l'application comme initialisée
+            isInitialized = true;
+            
+            // Masquer le message de chargement
+            hideLoadingScreen();
+            
+            // Déclencher l'événement d'initialisation
+            document.dispatchEvent(new CustomEvent('app:initialized'));
             
             return true;
         } catch (error) {
-            console.error('Erreur lors de l\'effacement des données utilisateur:', error);
+            console.error('Erreur lors de l\'initialisation de l\'application:', error);
+            showError('Une erreur est survenue lors de l\'initialisation de l\'application. Veuillez réessayer.');
+            
             return false;
         }
     }
     
+    /**
+     * Vérifie la compatibilité du navigateur
+     * @returns {boolean} Navigateur compatible
+     */
+    function checkBrowserCompatibility() {
+        // Vérifier les fonctionnalités essentielles
+        const REQUIRED_FEATURES = [
+            'Promise' in window,
+            'localStorage' in window,
+            'fetch' in window,
+            'CustomEvent' in window
+        ];
+        
+        return REQUIRED_FEATURES.every(feature => feature === true);
+    }
+    
+    /**
+     * Initialise les modules principaux de l'application
+     */
+    function initializeModules() {
+        // Modules utilitaires
+        try {
+            // S'assurer que les modules sont disponibles
+            if (!window.helpers) {
+                console.warn('Module helpers non disponible');
+            }
+            
+            if (!window.storage) {
+                console.warn('Module storage non disponible');
+            }
+            
+            if (!window.charts) {
+                console.warn('Module charts non disponible');
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation des modules utilitaires:', error);
+        }
+        
+        // Modules de données
+        try {
+            if (!window.testsData) {
+                console.warn('Module testsData non disponible');
+            }
+            
+            if (!window.userData) {
+                console.warn('Module userData non disponible');
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation des modules de données:', error);
+        }
+        
+        // Modules de fonctionnalités
+        try {
+            if (!window.testsModule) {
+                console.warn('Module testsModule non disponible');
+            }
+            
+            if (!window.bilanModule) {
+                console.warn('Module bilanModule non disponible');
+            }
+            
+            if (!window.plannerModule) {
+                console.warn('Module plannerModule non disponible');
+            }
+            
+            if (!window.todaySessionModule) {
+                console.warn('Module todaySessionModule non disponible');
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation des modules de fonctionnalités:', error);
+        }
+        
+        // Module de navigation
+        try {
+            if (!window.navigation) {
+                console.warn('Module navigation non disponible');
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation du module de navigation:', error);
+        }
+    }
+    
+    /**
+     * Vérifie si l'utilisateur est authentifié
+     * @returns {Promise<boolean>} Utilisateur authentifié
+     */
+    async function checkAuthentication() {
+        // Dans un contexte réel, vérifierait l'authentification avec le service d'authentification de GoodBarber
+        
+        return new Promise(resolve => {
+            // Simuler un délai d'authentification
+            setTimeout(() => {
+                // Vérifier si l'URL contient un paramètre d'authentification
+                const urlParams = new URLSearchParams(window.location.search);
+                const authToken = urlParams.get('auth_token');
+                
+                if (authToken) {
+                    // Stocker le token d'authentification
+                    localStorage.setItem('auth_token', authToken);
+                    resolve(true);
+                } else {
+                    // Vérifier si un token existe déjà en localStorage
+                    const existingToken = localStorage.getItem('auth_token');
+                    resolve(!!existingToken);
+                }
+            }, 500);
+        });
+    }
+    
+    /**
+     * Déconnecte l'utilisateur
+     * Fonction manquante qui était référencée
+     */
+    function logout() {
+        console.log("Fonction logout à implémenter");
+        try {
+            // Supprimer le token d'authentification
+            localStorage.removeItem('auth_token');
+            
+            // Réinitialiser l'état
+            userAuthenticated = false;
+            userProfile = null;
+            
+            // Rediriger vers la page d'accueil
+            window.location.href = '/bilan-vital-app/';
+        } catch (error) {
+            console.error('Erreur lors de la déconnexion:', error);
+        }
+    }
+    
+    /**
+     * Charge le profil utilisateur
+     * @returns {Promise<Object>} Profil utilisateur
+     */
+    async function loadUserProfile() {
+        try {
+            // Utiliser le module userData pour récupérer le profil
+            if (window.userData && typeof window.userData.getUserProfile === 'function') {
+                return await window.userData.getUserProfile();
+            }
+            
+            // Fallback si le module n'est pas disponible
+            return null;
+        } catch (error) {
+            console.error('Erreur lors du chargement du profil utilisateur:', error);
+            return null;
+        }
+    }
+    
+    /**
+     * Charge les préférences de l'utilisateur
+     */
+    function loadUserPreferences() {
+        try {
+            // Récupérer le thème stocké en localStorage
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                APP_CONFIG.theme = savedTheme;
+                applyTheme(savedTheme);
+            }
+        } catch (error) {
+            console.error('Erreur lors du chargement des préférences:', error);
+        }
+    }
+    
+    /**
+     * Initialise l'interface utilisateur
+     */
+    function initializeUI() {
+        try {
+            // Appliquer le thème actuel
+            applyTheme(APP_CONFIG.theme);
+            
+            // Initialiser les liens de navigation
+            initializeNavigation();
+            
+            // Initialiser les gestionnaires d'événements pour l'UI
+            initializeEventListeners();
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation de l\'UI:', error);
+        }
+    }
+    
+    /**
+     * Initialise les liens de navigation
+     */
+    function initializeNavigation() {
+        try {
+            // Récupérer tous les liens de navigation
+            const navLinks = document.querySelectorAll('nav a');
+            
+            // Ajouter les écouteurs d'événements
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    // Empêcher le comportement par défaut
+                    event.preventDefault();
+                    
+                    // Récupérer la cible
+                    const target = this.getAttribute('href');
+                    
+                    // Si c'est un lien externe (commence par http)
+                    if (target.startsWith('http')) {
+                        window.open(target, '_blank');
+                        return;
+                    }
+                    
+                    // Si c'est un lien d'ancre (commence par #)
+                    if (target.startsWith('#')) {
+                        const targetId = target.substring(1);
+                        const targetElement = document.getElementById(targetId);
+                        
+                        if (targetElement) {
+                            // Faire défiler jusqu'à l'élément
+                            targetElement.scrollIntoView({ behavior: 'smooth' });
+                            
+                            // Déclencher un événement de navigation pour les modules
+                            document.dispatchEvent(new CustomEvent('navigation:change', {
+                                detail: {
+                                    path: `feature/${targetId}`
+                                }
+                            }));
+                        }
+                    }
+                });
+            });
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation de la navigation:', error);
+        }
+    }
+    
+    /**
+     * Initialise les gestionnaires d'événements pour l'UI
+     */
+    function initializeEventListeners() {
+        try {
+            // Écouteur pour le changement de thème
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', function() {
+                    const newTheme = APP_CONFIG.theme === 'light' ? 'dark' : 'light';
+                    setTheme(newTheme);
+                });
+            }
+            
+            // Écouteur pour le bouton de déconnexion
+            const logoutButton = document.getElementById('logoutButton');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', logout);
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation des écouteurs d\'événements:', error);
+        }
+    }
+    
+    /**
+     * Affiche un message de chargement
+     * @param {string} message - Message à afficher
+     */
+    function showLoadingScreen(message) {
+        try {
+            // Vérifier si un écran de chargement existe déjà
+            let loadingScreen = document.getElementById('loadingScreen');
+            
+            if (!loadingScreen) {
+                // Créer l'écran de chargement
+                loadingScreen = document.createElement('div');
+                loadingScreen.id = 'loadingScreen';
+                loadingScreen.className = 'loading-screen';
+                
+                // Créer le contenu
+                loadingScreen.innerHTML = `
+                    <div class="loading-content">
+                        <div class="loading-spinner"></div>
+                        <p class="loading-message">${message || 'Chargement en cours...'}</p>
+                    </div>
+                `;
+                
+                // Ajouter au document
+                document.body.appendChild(loadingScreen);
+            } else {
+                // Mettre à jour le message
+                const loadingMessage = loadingScreen.querySelector('.loading-message');
+                if (loadingMessage) {
+                    loadingMessage.textContent = message || 'Chargement en cours...';
+                }
+                
+                // S'assurer que l'écran est visible
+                loadingScreen.style.display = 'flex';
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'affichage de l\'écran de chargement:', error);
+        }
+    }
+    
+    /**
+     * Masque le message de chargement
+     */
+    function hideLoadingScreen() {
+        try {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                // Ajouter une classe pour une animation de disparition
+                loadingScreen.classList.add('loading-screen-hidden');
+                
+                // Supprimer après l'animation
+                setTimeout(() => {
+                    if (loadingScreen.parentNode) {
+                        loadingScreen.parentNode.removeChild(loadingScreen);
+                    }
+                }, 300);
+            }
+        } catch (error) {
+            console.error('Erreur lors du masquage de l\'écran de chargement:', error);
+        }
+    }
+    
+    /**
+     * Affiche un message d'erreur
+     * @param {string} message - Message d'erreur
+     * @param {string} type - Type d'erreur (error, warning, info)
+     */
+    function showError(message, type = 'error') {
+        try {
+            // Vérifier si un conteneur d'erreur existe déjà
+            let errorContainer = document.getElementById('errorContainer');
+            
+            if (!errorContainer) {
+                // Créer le conteneur d'erreur
+                errorContainer = document.createElement('div');
+                errorContainer.id = 'errorContainer';
+                errorContainer.className = 'error-container';
+                
+                // Ajouter au document
+                document.body.appendChild(errorContainer);
+            }
+            
+            // Créer le message d'erreur
+            const errorElement = document.createElement('div');
+            errorElement.className = `error-message error-${type}`;
+            errorElement.innerHTML = `
+                <div class="error-icon"></div>
+                <div class="error-text">${message}</div>
+                <button class="error-close">&times;</button>
+            `;
+            
+            // Ajouter au conteneur
+            errorContainer.appendChild(errorElement);
+            
+            // Ajouter l'écouteur pour fermer le message
+            const closeButton = errorElement.querySelector('.error-close');
+            if (closeButton) {
+                closeButton.addEventListener('click', () => {
+                    errorElement.classList.add('error-hidden');
+                    setTimeout(() => {
+                        if (errorElement.parentNode) {
+                            errorElement.parentNode.removeChild(errorElement);
+                        }
+                    }, 300);
+                });
+            }
+            
+            // Fermer automatiquement après un délai (sauf pour les erreurs)
+            if (type !== 'error') {
+                setTimeout(() => {
+                    errorElement.classList.add('error-hidden');
+                    setTimeout(() => {
+                        if (errorElement.parentNode) {
+                            errorElement.parentNode.removeChild(errorElement);
+                        }
+                    }, 300);
+                }, 5000);
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'affichage du message d\'erreur:', error);
+        }
+    }
+    
+    /**
+     * Change le thème de l'application
+     * @param {string} theme - Thème à appliquer (light ou dark)
+     */
+    function setTheme(theme) {
+        if (theme !== 'light' && theme !== 'dark') {
+            console.warn('Thème non valide. Utilisation du thème par défaut: light');
+            theme = 'light';
+        }
+        
+        // Mettre à jour la configuration
+        APP_CONFIG.theme = theme;
+        
+        // Sauvegarder dans localStorage
+        localStorage.setItem('theme', theme);
+        
+        // Appliquer le thème
+        applyTheme(theme);
+    }
+    
+    /**
+     * Applique un thème
+     * @param {string} theme - Thème à appliquer
+     */
+    function applyTheme(theme) {
+        try {
+            // Appliquer la classe de thème au body
+            document.body.classList.remove('theme-light', 'theme-dark');
+            document.body.classList.add(`theme-${theme}`);
+            
+            // Mettre à jour les métadonnées
+            const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+            if (metaThemeColor) {
+                metaThemeColor.setAttribute('content', theme === 'dark' ? '#333333' : '#00813F');
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'application du thème:', error);
+        }
+    }
+    
+    // Le reste du code de app.js reste en camelCase car il contient principalement des fonctions et des variables qui changent...
+    
     // API publique
     return {
-        getUserProfile,
-        updateUserProfile,
-        getTestResults,
-        saveTestResult,
-        getDailyState,
-        saveDailyState,
-        getWeeklyPlan,
-        saveWeeklyPlan,
-        isWeeklyPlanActive,
-        clearAllUserData
+        initialize,
+        config: APP_CONFIG, // Renommé mais garde la même clé dans l'API
+        logout,
+        showError,
+        setTheme,
+        isAuthenticated: () => userAuthenticated,
+        getUserProfile: () => userProfile
     };
 })();
 
-// Export du module pour utilisation dans d'autres fichiers
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = userData;
-} else {
-    window.userData = userData;
-}
+// Initialiser l'application au chargement du document
+document.addEventListener('DOMContentLoaded', function() {
+    app.initialize().then(success => {
+        if (!success) {
+            console.error('L\'initialisation de l\'application a échoué');
+        }
+    });
+});
+
+// Export global
+window.app = app;
