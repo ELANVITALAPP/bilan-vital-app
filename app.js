@@ -1,4 +1,4 @@
-// app.js - Version simplifiée
+// app.js - Version simplifiée mise à jour pour utiliser les objets globaux
 document.addEventListener('DOMContentLoaded', function() {
     // Initialisation de l'application
     console.log('Initialisation de Bilan Vital - Version simplifiée');
@@ -12,6 +12,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Chargement du bilan si des données existent
     loadBilan();
 });
+
+// Fonction globale pour la navigation entre les sections
+// Cette fonction est utilisée par d'autres modules
+function showSection(sectionId) {
+    // Masquer toutes les sections
+    document.querySelectorAll('main > section').forEach(section => {
+        section.classList.add('hidden');
+        section.classList.remove('active');
+    });
+    
+    // Afficher la section demandée
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) {
+        targetSection.classList.remove('hidden');
+        targetSection.classList.add('active');
+    }
+}
 
 // Navigation simplifiée
 function initNavigation() {
@@ -41,22 +58,6 @@ function initNavigation() {
     document.getElementById('next-question').addEventListener('click', function() {
         Tests.nextQuestion();
     });
-}
-
-// Fonction pour afficher une section et masquer les autres
-function showSection(sectionId) {
-    // Masquer toutes les sections
-    document.querySelectorAll('main > section').forEach(section => {
-        section.classList.add('hidden');
-        section.classList.remove('active');
-    });
-    
-    // Afficher la section demandée
-    const targetSection = document.getElementById(sectionId);
-    if (targetSection) {
-        targetSection.classList.remove('hidden');
-        targetSection.classList.add('active');
-    }
 }
 
 // Fonction pour charger les tests disponibles
@@ -125,7 +126,7 @@ function loadTests() {
 // Fonction pour charger le bilan récapitulatif
 function loadBilan() {
     try {
-        // Vérifier si la fonction Bilan.loadUserData existe
+        // Vérifier si l'objet Bilan existe et si la fonction loadUserData est disponible
         if (typeof Bilan !== 'undefined' && typeof Bilan.loadUserData === 'function') {
             Bilan.loadUserData();
         } else {
