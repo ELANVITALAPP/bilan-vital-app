@@ -24,6 +24,7 @@ const testsModule = (function() {
     function initialize() {
         // Écouter les événements de navigation pour nettoyer l'état si nécessaire
         document.addEventListener('navigation:change', handleNavigationChange);
+        console.log("Module tests initialisé");
     }
     
     /**
@@ -372,8 +373,7 @@ const testsModule = (function() {
                 
                 container.appendChild(numberContainer);
                 break;
-                
-            case 'text':
+                case 'text':
                 // Zone de texte
                 const textContainer = document.createElement('div');
                 textContainer.className = 'textContainer';
@@ -653,7 +653,7 @@ const testsModule = (function() {
      * @param {Object} test - Données du test
      * @param {Array} answers - Réponses de l'utilisateur
      * @param {number} duration - Durée du test en secondes
-     * @returns {Object} Résultats calculés
+     * @returns {Promise<Object>} Résultats calculés
      */
     async function evaluateTest(test, answers, duration) {
         let results = {
@@ -887,6 +887,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Export du module pour utilisation dans d'autres fichiers
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = testsModule;
-}
+window.testsModule = testsModule;
