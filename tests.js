@@ -1,6 +1,4 @@
-// tests.js - Version mise à jour utilisant les objets globaux
-// Utiliser une structure IIFE au lieu de modules ES6
-
+// tests.js - Version mise à jour avec améliorations des échelles Likert
 const Tests = (function() {
     // Variables privées
     let currentTest = null;
@@ -24,8 +22,7 @@ const Tests = (function() {
             // Afficher la première question
             displayCurrentQuestion();
             
-            // Afficher la section de test en utilisant une fonction globale
-            // Supposons que showSection est définie ailleurs dans votre code
+            // Afficher la section de test
             showSection('test-content');
             
             // Mettre à jour le titre du test
@@ -91,19 +88,24 @@ const Tests = (function() {
                     break;
                     
                 case 'likert':
-                    questionHtml += `<div class="options likert-scale">`;
+                    questionHtml += `<div class="options likert-scale">
+                        <div class="likert-options">`;
+                    // Créer 5 options avec labels
                     for (let i = 1; i <= 5; i++) {
                         const isChecked = userAnswers[currentQuestionIndex] === i ? 'checked' : '';
                         questionHtml += `
-                            <div class="option">
+                            <div class="likert-option">
                                 <input type="radio" id="likert-${i}" name="question-${currentQuestionIndex}" value="${i}" ${isChecked}>
                                 <label for="likert-${i}">${i}</label>
                             </div>
                         `;
                     }
-                    questionHtml += `
+                    questionHtml += `</div>
                         <div class="likert-labels">
                             <span>Pas du tout d'accord</span>
+                            <span>Plutôt pas d'accord</span>
+                            <span>Neutre</span>
+                            <span>Plutôt d'accord</span>
                             <span>Tout à fait d'accord</span>
                         </div>
                     </div>`;
@@ -113,6 +115,7 @@ const Tests = (function() {
                     const sliderValue = userAnswers[currentQuestionIndex] !== null ? userAnswers[currentQuestionIndex] : 50;
                     questionHtml += `
                         <div class="options slider">
+                            <div class="current-value">Valeur actuelle: <strong>${sliderValue}</strong></div>
                             <input type="range" id="slider" name="question-${currentQuestionIndex}" min="0" max="100" value="${sliderValue}">
                             <div class="slider-labels">
                                 <span>${currentQuestion.minLabel || 'Minimum'}</span>
@@ -166,8 +169,17 @@ const Tests = (function() {
                 case 'slider':
                     // Pour les sliders
                     const slider = document.querySelector(`input[name="question-${currentQuestionIndex}"]`);
+                    const valueDisplay = document.querySelector('.current-value strong');
+                    
+                    // Mettre à jour l'affichage pendant le déplacement
                     slider.addEventListener('input', function() {
-                        userAnswers[currentQuestionIndex] = parseInt(this.value);
+                        const value = parseInt(this.value);
+                        userAnswers[currentQuestionIndex] = value;
+                        
+                        // Mettre à jour l'affichage
+                        if (valueDisplay) {
+                            valueDisplay.textContent = value;
+                        }
                     });
                     break;
             }
