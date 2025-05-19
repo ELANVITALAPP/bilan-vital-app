@@ -1,533 +1,170 @@
-/**
- * Données des tests pour l'application Bilan Vital
- * Ce fichier contient la définition structurée de tous les tests disponibles
- * dans l'application, organisés par catégories.
- */
-
-const testsData = (function() {
-    // Configuration des catégories principales
-    const CATEGORIES = [
+// tests-data.js - Données des tests simplifiées
+const testsData = {
+    categories: [
         {
-            id: "stress-alim-sommeil",
+            id: "cat1",
             name: "Stress, Alimentation et Sommeil",
-            icon: "zen-balance", // Nom de l'icône dans les assets
-            description: "Évaluez votre niveau de stress, vos habitudes alimentaires et la qualité de votre sommeil",
-            color: "#5A9367", // Variante de la couleur verte principale
+            description: "Évaluez votre niveau de stress, vos habitudes alimentaires et la qualité de votre sommeil.",
             tests: [
-                "sommeil", "alimentation", "anxiete", "qualite-vie"
+                {
+                    id: "stress",
+                    name: "Niveau de stress",
+                    description: "Évaluez votre niveau de stress actuel et identifiez vos principaux facteurs de stress.",
+                    duration: "5-7",
+                    questions: [
+                        {
+                            text: "À quelle fréquence vous sentez-vous nerveux(se) ou stressé(e) ?",
+                            type: "likert"
+                        },
+                        {
+                            text: "Avez-vous des difficultés à vous détendre ?",
+                            type: "likert"
+                        },
+                        {
+                            text: "À quelle fréquence vous sentez-vous irritable ou impatient(e) ?",
+                            type: "likert"
+                        },
+                        {
+                            text: "Ressentez-vous des tensions musculaires (cou, épaules, dos) ?",
+                            type: "likert"
+                        },
+                        {
+                            text: "Avez-vous des difficultés à vous concentrer en raison du stress ?",
+                            type: "likert"
+                        }
+                    ]
+                },
+                {
+                    id: "sleep",
+                    name: "Qualité du sommeil",
+                    description: "Évaluez la qualité de votre sommeil et identifiez d'éventuels problèmes.",
+                    duration: "3-5",
+                    questions: [
+                        {
+                            text: "Combien d'heures dormez-vous en moyenne par nuit ?",
+                            type: "multiple-choice",
+                            options: [
+                                { text: "Moins de 5 heures", score: 1 },
+                                { text: "5-6 heures", score: 2 },
+                                { text: "6-7 heures", score: 3 },
+                                { text: "7-8 heures", score: 4 },
+                                { text: "Plus de 8 heures", score: 5 }
+                            ],
+                            maxScore: 5
+                        },
+                        {
+                            text: "Combien de temps mettez-vous généralement à vous endormir ?",
+                            type: "multiple-choice",
+                            options: [
+                                { text: "Moins de 15 minutes", score: 5 },
+                                { text: "15-30 minutes", score: 4 },
+                                { text: "30-45 minutes", score: 3 },
+                                { text: "45-60 minutes", score: 2 },
+                                { text: "Plus de 60 minutes", score: 1 }
+                            ],
+                            maxScore: 5
+                        },
+                        {
+                            text: "À quelle fréquence vous réveillez-vous pendant la nuit ?",
+                            type: "likert"
+                        },
+                        {
+                            text: "À quel point vous sentez-vous reposé(e) au réveil ?",
+                            type: "slider",
+                            minLabel: "Pas du tout reposé(e)",
+                            maxLabel: "Parfaitement reposé(e)"
+                        },
+                        {
+                            text: "À quelle fréquence vous sentez-vous somnolent(e) pendant la journée ?",
+                            type: "likert"
+                        }
+                    ]
+                }
             ]
         },
         {
-            id: "personnalite-sante",
+            id: "cat2",
             name: "Personnalité et Santé",
-            icon: "silhouette", // Nom de l'icône dans les assets
-            description: "Découvrez comment votre personnalité influence votre approche de la santé et du bien-être",
-            color: "#4A8D5B", // Variante de la couleur verte principale
+            description: "Découvrez les aspects de votre personnalité qui influencent votre bien-être.",
             tests: [
-                "limitations", "image-corps", "personnalite", "estime-soi"
+                {
+                    id: "personality",
+                    name: "Traits de personnalité",
+                    description: "Identifiez vos principaux traits de personnalité et leur impact sur votre bien-être.",
+                    duration: "8-10",
+                    questions: [
+                        {
+                            text: "Je préfère les activités sociales aux moments de solitude.",
+                            type: "slider",
+                            minLabel: "Pas du tout d'accord",
+                            maxLabel: "Tout à fait d'accord"
+                        },
+                        {
+                            text: "Je suis généralement optimiste face aux situations difficiles.",
+                            type: "likert"
+                        },
+                        {
+                            text: "J'ai tendance à planifier à l'avance plutôt qu'à improviser.",
+                            type: "likert"
+                        },
+                        {
+                            text: "Je me sens souvent submergé(e) par mes émotions.",
+                            type: "likert"
+                        },
+                        {
+                            text: "Je suis ouvert(e) aux nouvelles expériences et au changement.",
+                            type: "likert"
+                        }
+                    ]
+                }
             ]
         },
         {
-            id: "motivations",
-            name: "Motivations",
-            icon: "target", // Nom de l'icône dans les assets
-            description: "Identifiez vos motivations, objectifs et les leviers de votre engagement",
-            color: "#3A8748", // Variante de la couleur verte principale
-            tests: [
-                "motivation-sante", "objectifs", "pratique-passee", "freins-leviers"
-            ]
-        },
-        {
-            id: "tests-physiques",
+            id: "cat3",
             name: "Tests Physiques",
-            icon: "movement", // Nom de l'icône dans les assets
-            description: "Évaluez vos capacités physiques : force, souplesse, équilibre et endurance",
-            color: "#00813F", // Couleur verte principale
+            description: "Évaluez votre condition physique à travers des tests simples.",
             tests: [
-                "force-jambes", "souplesse-epaules", "souplesse-dos", "equilibre-statique",
-                "equilibre-dynamique", "endurance", "force-dos", "force-bras", "force-abdos"
+                {
+                    id: "flexibility",
+                    name: "Flexibilité",
+                    description: "Évaluez votre flexibilité corporelle à travers des exercices simples.",
+                    duration: "10-15",
+                    questions: [
+                        {
+                            text: "Comment évaluez-vous votre flexibilité générale ?",
+                            type: "slider",
+                            minLabel: "Très rigide",
+                            maxLabel: "Très flexible"
+                        },
+                        {
+                            text: "Pouvez-vous toucher vos orteils en gardant les jambes tendues ?",
+                            type: "multiple-choice",
+                            options: [
+                                { text: "Pas du tout", score: 1 },
+                                { text: "J'arrive à mes mollets", score: 2 },
+                                { text: "J'arrive à mes chevilles", score: 3 },
+                                { text: "Je touche à peine mes orteils", score: 4 },
+                                { text: "Je peux aller plus loin que mes orteils", score: 5 }
+                            ],
+                            maxScore: 5
+                        },
+                        {
+                            text: "Éprouvez-vous des difficultés pour vous pencher sur le côté ?",
+                            type: "likert"
+                        },
+                        {
+                            text: "Comment évaluez-vous la souplesse de votre cou ?",
+                            type: "slider",
+                            minLabel: "Très limité",
+                            maxLabel: "Très souple"
+                        },
+                        {
+                            text: "Ressentez-vous des tensions ou des douleurs lors des étirements ?",
+                            type: "likert"
+                        }
+                    ]
+                }
             ]
         }
-    ];
-
-    // Définition détaillée de tous les tests
-    const TESTS = {
-        // Catégorie 1: Stress, Alimentation et Sommeil
-        "sommeil": {
-            id: "sommeil",
-            name: "Test de Sommeil",
-            description: "Évaluez la qualité de votre sommeil et identifiez d'éventuels troubles",
-            duration: "5-7 minutes",
-            difficulty: 1, // 1-3, où 1 est facile
-            categoryId: "stress-alim-sommeil",
-            instructions: "Répondez aux questions suivantes en pensant à vos habitudes de sommeil des deux dernières semaines. Soyez le plus honnête possible.",
-            questions: [
-                {
-                    id: "sommeil-1",
-                    text: "Comment évalueriez-vous la qualité globale de votre sommeil ?",
-                    type: "radio",
-                    options: [
-                        { value: 0, text: "Très bonne" },
-                        { value: 1, text: "Plutôt bonne" },
-                        { value: 2, text: "Plutôt mauvaise" },
-                        { value: 3, text: "Très mauvaise" }
-                    ]
-                },
-                {
-                    id: "sommeil-2",
-                    text: "Combien de temps mettez-vous généralement à vous endormir ?",
-                    type: "radio",
-                    options: [
-                        { value: 0, text: "Moins de 15 minutes" },
-                        { value: 1, text: "15-30 minutes" },
-                        { value: 2, text: "31-60 minutes" },
-                        { value: 3, text: "Plus de 60 minutes" }
-                    ]
-                },
-                {
-                    id: "sommeil-3",
-                    text: "Quelle est la durée habituelle de votre sommeil par nuit ?",
-                    type: "radio",
-                    options: [
-                        { value: 0, text: "Plus de 7 heures" },
-                        { value: 1, text: "6-7 heures" },
-                        { value: 2, text: "5-6 heures" },
-                        { value: 3, text: "Moins de 5 heures" }
-                    ]
-                },
-                {
-                    id: "sommeil-4",
-                    text: "À quelle fréquence vous réveillez-vous pendant la nuit ?",
-                    type: "radio",
-                    options: [
-                        { value: 0, text: "Jamais ou rarement" },
-                        { value: 1, text: "Moins d'une fois par semaine" },
-                        { value: 2, text: "1-2 fois par semaine" },
-                        { value: 3, text: "3 fois par semaine ou plus" }
-                    ]
-                },
-                {
-                    id: "sommeil-5",
-                    text: "Vous sentez-vous reposé(e) au réveil ?",
-                    type: "radio",
-                    options: [
-                        { value: 0, text: "Oui, presque toujours" },
-                        { value: 1, text: "Souvent" },
-                        { value: 2, text: "Parfois" },
-                        { value: 3, text: "Rarement ou jamais" }
-                    ]
-                },
-                {
-                    id: "sommeil-6",
-                    text: "Prenez-vous des médicaments pour dormir ?",
-                    type: "radio",
-                    options: [
-                        { value: 0, text: "Jamais" },
-                        { value: 1, text: "Moins d'une fois par semaine" },
-                        { value: 2, text: "1-2 fois par semaine" },
-                        { value: 3, text: "3 fois par semaine ou plus" }
-                    ]
-                },
-                {
-                    id: "sommeil-7",
-                    text: "Avez-vous des difficultés à rester éveillé(e) pendant la journée ?",
-                    type: "radio",
-                    options: [
-                        { value: 0, text: "Jamais" },
-                        { value: 1, text: "Moins d'une fois par semaine" },
-                        { value: 2, text: "1-2 fois par semaine" },
-                        { value: 3, text: "3 fois par semaine ou plus" }
-                    ]
-                }
-            ],
-            scoring: {
-                method: "sum", // Somme simple des points
-                ranges: [
-                    { min: 0, max: 5, label: "Bonne qualité de sommeil",
-                      description: "Votre sommeil est de bonne qualité. Continuez à maintenir vos bonnes habitudes.",
-                      color: "#4CAF50" },
-                    { min: 6, max: 10, label: "Qualité moyenne",
-                      description: "Votre sommeil présente quelques troubles occasionnels qui pourraient être améliorés.",
-                      color: "#FFC107" },
-                    { min: 11, max: 15, label: "Qualité médiocre",
-                      description: "Votre sommeil présente des troubles significatifs qui impactent votre quotidien.",
-                      color: "#FF9800" },
-                    { min: 16, max: 21, label: "Mauvaise qualité",
-                      description: "Votre sommeil présente des troubles sévères. Une consultation médicale est recommandée.",
-                      color: "#E53935" }
-                ],
-                recommendations: {
-                    // Recommandations détaillées basées sur le score
-                    "0-5": [
-                        "Maintien des bonnes habitudes de sommeil",
-                        "Pratique régulière de séances de pilates en fin de journée",
-                        "Technique de respiration 4-7-8 avant le coucher"
-                    ],
-                    "6-10": [
-                        "Limitation des écrans avant le coucher",
-                        "Réduction de la caféine après 14h",
-                        "Séances d'étirements de 10-15 minutes avant le coucher",
-                        "Relaxation musculaire progressive de Jacobson"
-                    ],
-                    "11-15": [
-                        "Programme spécifique d'amélioration du sommeil",
-                        "Séances régulières de pilates axées sur la respiration",
-                        "Tenir un journal de sommeil pour identifier les facteurs perturbateurs"
-                    ],
-                    "16-21": [
-                        "Consultation d'un spécialiste du sommeil recommandée",
-                        "Séances sur chaise même en cas de fatigue extrême",
-                        "Méditation guidée par la pleine conscience avant le coucher"
-                    ]
-                }
-            }
-        },
-
-        "alimentation": {
-            id: "alimentation",
-            name: "Test de Qualité Alimentaire",
-            description: "Évaluez vos habitudes alimentaires et la qualité nutritionnelle de votre alimentation",
-            duration: "5-7 minutes",
-            difficulty: 1,
-            categoryId: "stress-alim-sommeil",
-            instructions: "Répondez aux questions suivantes en pensant à vos habitudes alimentaires habituelles. Soyez le plus honnête possible.",
-            questions: [
-                {
-                    id: "alim-1",
-                    text: "Combien de portions de fruits et légumes consommez-vous par jour en moyenne ?",
-                    type: "radio",
-                    options: [
-                        { value: 0, text: "Moins d'une portion" },
-                        { value: 5, text: "1-2 portions" },
-                        { value: 10, text: "3-4 portions" },
-                        { value: 15, text: "5 portions ou plus" }
-                    ]
-                },
-                {
-                    id: "alim-2",
-                    text: "À quelle fréquence consommez-vous des aliments ultra-transformés (plats préparés, snacks industriels) ?",
-                    type: "radio",
-                    options: [
-                        { value: 15, text: "Rarement ou jamais" },
-                        { value: 10, text: "1-2 fois par semaine" },
-                        { value: 5, text: "3-5 fois par semaine" },
-                        { value: 0, text: "Quotidiennement" }
-                    ]
-                },
-                {
-                    id: "alim-3",
-                    text: "Combien de repas prenez-vous par jour habituellement ?",
-                    type: "radio",
-                    options: [
-                        { value: 5, text: "1 repas" },
-                        { value: 10, text: "2 repas" },
-                        { value: 15, text: "3 repas ou plus, réguliers" },
-                        { value: 5, text: "Pas de structure régulière" }
-                    ]
-                },
-                {
-                    id: "alim-4",
-                    text: "À quelle fréquence consommez-vous des boissons sucrées ?",
-                    type: "radio",
-                    options: [
-                        { value: 15, text: "Rarement ou jamais" },
-                        { value: 10, text: "1-2 fois par semaine" },
-                        { value: 5, text: "3-5 fois par semaine" },
-                        { value: 0, text: "Quotidiennement" }
-                    ]
-                },
-                {
-                    id: "alim-5",
-                    text: "À quelle fréquence consommez-vous des protéines végétales (légumineuses, tofu, etc.) ?",
-                    type: "radio",
-                    options: [
-                        { value: 15, text: "Plusieurs fois par jour" },
-                        { value: 10, text: "Quotidiennement" },
-                        { value: 5, text: "1-3 fois par semaine" },
-                        { value: 0, text: "Rarement ou jamais" }
-                    ]
-                },
-                {
-                    id: "alim-6",
-                    text: "Comment évalueriez-vous votre hydratation quotidienne ?",
-                    type: "radio",
-                    options: [
-                        { value: 15, text: "Plus de 1,5L d'eau par jour" },
-                        { value: 10, text: "1-1,5L d'eau par jour" },
-                        { value: 5, text: "0,5-1L d'eau par jour" },
-                        { value: 0, text: "Moins de 0,5L d'eau par jour" }
-                    ]
-                },
-                {
-                    id: "alim-7",
-                    text: "À quelle fréquence grignotez-vous entre les repas ?",
-                    type: "radio",
-                    options: [
-                        { value: 10, text: "Jamais" },
-                        { value: 5, text: "Occasionnellement" },
-                        { value: 0, text: "Quotidiennement" }
-                    ]
-                }
-            ],
-            scoring: {
-                method: "sum",
-                ranges: [
-                    { min: 0, max: 40, label: "Alimentation déséquilibrée",
-                      description: "Vos habitudes alimentaires présentent plusieurs déséquilibres importants.",
-                      color: "#E53935" },
-                    { min: 41, max: 60, label: "Alimentation moyennement équilibrée",
-                      description: "Votre alimentation présente quelques déséquilibres qui pourraient être améliorés.",
-                      color: "#FF9800" },
-                    { min: 61, max: 80, label: "Alimentation relativement équilibrée",
-                      description: "Votre alimentation est globalement équilibrée avec quelques points d'amélioration.",
-                      color: "#FFC107" },
-                    { min: 81, max: 100, label: "Alimentation très équilibrée",
-                      description: "Votre alimentation est très équilibrée. Continuez à maintenir ces bonnes habitudes.",
-                      color: "#4CAF50" }
-                ],
-                recommendations: {
-                    "0-40": [
-                        "Introduction progressive de fruits et légumes",
-                        "Journal alimentaire pendant 7 jours",
-                        "Augmenter la consommation de légumes d'1 portion/jour chaque semaine",
-                        "Réduire progressivement les aliments ultra-transformés"
-                    ],
-                    "41-60": [
-                        "Équilibrer l'assiette (1/2 légumes, 1/4 protéines, 1/4 féculents)",
-                        "Remplacer les féculents raffinés par des versions complètes",
-                        "Introduire des sources de protéines variées"
-                    ],
-                    "61-80": [
-                        "Planification des repas pour la semaine",
-                        "Technique du batch cooking",
-                        "Intégrer davantage d'aliments anti-inflammatoires",
-                        "Augmenter la consommation d'eau"
-                    ],
-                    "81-100": [
-                        "Maintien des bonnes habitudes",
-                        "Explorer les aliments fonctionnels selon vos besoins spécifiques",
-                        "Optimiser la chrononutrition"
-                    ]
-                }
-            }
-        },
-
-        // Exemple pour un test de la catégorie Tests Physiques
-        "force-jambes": {
-            id: "force-jambes",
-            name: "Test de Force Membres Inférieurs",
-            description: "Évaluez la force et l'endurance de vos jambes",
-            duration: "2 minutes",
-            difficulty: 2,
-            categoryId: "tests-physiques",
-            instructions: "Asseyez-vous sur une chaise stable avec les pieds à plat sur le sol. Croisez les bras sur la poitrine. Au signal, levez-vous complètement puis rasseyez-vous autant de fois que possible pendant 30 secondes.",
-            isPhysical: true, // Indique que c'est un test physique nécessitant une démonstration vidéo
-            videoUrl: "assets/videos/test-force-jambes.mp4",
-            timerDuration: 30, // Durée du chronomètre en secondes
-            questions: [
-                {
-                    id: "force-jambes-1",
-                    text: "Nombre de levers complets réalisés en 30 secondes",
-                    type: "number",
-                    min: 0,
-                    max: 50
-                }
-            ],
-            scoring: {
-                method: "table", // Utilise une table de référence par âge/sexe
-                tables: {
-                    "female": {
-                        "60-64": [
-                            { max: 12, score: 1, label: "Faible" },
-                            { min: 13, max: 15, score: 2, label: "Moyen-faible" },
-                            { min: 16, max: 17, score: 3, label: "Moyen" },
-                            { min: 18, max: 20, score: 4, label: "Moyen-élevé" },
-                            { min: 21, score: 5, label: "Élevé" }
-                        ],
-                        "65-69": [
-                            { max: 11, score: 1, label: "Faible" },
-                            { min: 12, max: 14, score: 2, label: "Moyen-faible" },
-                            { min: 15, max: 16, score: 3, label: "Moyen" },
-                            { min: 17, max: 19, score: 4, label: "Moyen-élevé" },
-                            { min: 20, score: 5, label: "Élevé" }
-                        ]
-                        // Autres tranches d'âge...
-                    },
-                    "male": {
-                        "60-64": [
-                            { max: 14, score: 1, label: "Faible" },
-                            { min: 15, max: 17, score: 2, label: "Moyen-faible" },
-                            { min: 18, max: 19, score: 3, label: "Moyen" },
-                            { min: 20, max: 22, score: 4, label: "Moyen-élevé" },
-                            { min: 23, score: 5, label: "Élevé" }
-                        ],
-                        "65-69": [
-                            { max: 13, score: 1, label: "Faible" },
-                            { min: 14, max: 16, score: 2, label: "Moyen-faible" },
-                            { min: 17, max: 18, score: 3, label: "Moyen" },
-                            { min: 19, max: 21, score: 4, label: "Moyen-élevé" },
-                            { min: 22, score: 5, label: "Élevé" }
-                        ]
-                        // Autres tranches d'âge...
-                    }
-                },
-                recommendations: {
-                    "score-1": [
-                        "Programme de renforcement progressif",
-                        "Commencer par 5-8 répétitions de levés de chaise avec soutien",
-                        "Exercices simples comme les extensions de jambes assis"
-                    ],
-                    "score-2": [
-                        "Exercices de renforcement adaptés",
-                        "Progresser vers 10-12 répétitions sans soutien",
-                        "Ajouter des variations comme les demi-squats"
-                    ],
-                    "score-3": [
-                        "Programme d'optimisation",
-                        "Intégrer des squats partiels",
-                        "Ajouter des montées de marche",
-                        "Exercices d'équilibre fonctionnel"
-                    ],
-                    "score-4": [
-                        "Maintien et développement avancé",
-                        "Variations plus complexes des exercices de base",
-                        "Addition de poids légers pour progression"
-                    ],
-                    "score-5": [
-                        "Nouveaux défis",
-                        "Ajout d'exercices de puissance musculaire",
-                        "Montées d'escaliers rapides",
-                        "Squats dynamiques"
-                    ]
-                }
-            }
-        }
-
-        // Ajoutez ici les définitions pour les tests restants...
-    };
-
-    // Fonctionnalités spéciales
-    const SPECIAL_FEATURES = [
-        {
-            id: "bilan",
-            name: "Bilan récapitulatif",
-            description: "Visualisez l'ensemble de vos résultats et suivez votre progression",
-            icon: "chart-dashboard",
-            color: "#006633" // Vert profond
-        },
-        {
-            id: "planner",
-            name: "Planifier ma semaine",
-            description: "Créez un programme d'activités adapté à vos disponibilités",
-            icon: "calendar",
-            color: "#007F5F" // Vert calme
-        },
-        {
-            id: "todaySession",
-            name: "Quelle séance aujourd'hui?",
-            description: "Recevez une recommandation adaptée à votre état du jour",
-            icon: "compass",
-            color: "#00A36C" // Vert dynamique
-        }
-    ];
-
-    /**
-     * Retourne la liste complète des catégories
-     * @returns {Array} Liste des catégories
-     */
-    function getCategories() {
-        return [...CATEGORIES];
-    }
-
-    /**
-     * Retourne une catégorie spécifique par son ID
-     * @param {string} categoryId - ID de la catégorie
-     * @returns {Object|null} La catégorie ou null si non trouvée
-     */
-    function getCategoryById(categoryId) {
-        return CATEGORIES.find(category => category.id === categoryId) || null;
-    }
-
-    /**
-     * Retourne la liste des tests pour une catégorie spécifique
-     * @param {string} categoryId - ID de la catégorie
-     * @returns {Array} Liste des tests de la catégorie
-     */
-    function getTestsByCategoryId(categoryId) {
-        const category = getCategoryById(categoryId);
-        if (!category) return [];
-
-        return category.tests.map(testId => getTestById(testId));
-    }
-
-    /**
-     * Retourne un test spécifique par son ID
-     * @param {string} testId - ID du test
-     * @returns {Object|null} Le test ou null si non trouvé
-     */
-    function getTestById(testId) {
-        return TESTS[testId] || null;
-    }
-
-    /**
-     * Retourne toutes les fonctionnalités spéciales
-     * @returns {Array} Liste des fonctionnalités spéciales
-     */
-    function getSpecialFeatures() {
-        return [...SPECIAL_FEATURES];
-    }
-
-    /**
-     * Retourne une fonctionnalité spéciale par son ID
-     * @param {string} featureId - ID de la fonctionnalité
-     * @returns {Object|null} La fonctionnalité ou null si non trouvée
-     */
-    function getSpecialFeatureById(featureId) {
-        return SPECIAL_FEATURES.find(feature => feature.id === featureId) || null;
-    }
-
-    /**
-     * Retourne les recommandations pour un test spécifique basées sur le score
-     * @param {string} testId - ID du test
-     * @param {number} score - Score obtenu
-     * @returns {Array} Liste des recommandations
-     */
-    function getRecommendations(testId, score) {
-        const test = getTestById(testId);
-        if (!test || !test.scoring || !test.scoring.recommendations) return [];
-
-        // Déterminer la plage appropriée pour les recommandations
-        let recommendationKey = '';
-
-        if (test.scoring.method === 'sum') {
-            // Pour les méthodes par somme, trouver la plage qui contient le score
-            for (const range of test.scoring.ranges) {
-                if (score >= range.min && score <= range.max) {
-                    recommendationKey = `${range.min}-${range.max}`;
-                    break;
-                }
-            }
-        } else if (test.scoring.method === 'table') {
-            // Pour les méthodes par table, utiliser le score comme clé (ex: 'score-3')
-            recommendationKey = `score-${score}`;
-        }
-
-        return test.scoring.recommendations[recommendationKey] || [];
-    }
-
-    // API publique
-    return {
-        getCategories,
-        getCategoryById,
-        getTestsByCategoryId,
-        getTestById,
-        getSpecialFeatures,
-        getSpecialFeatureById,
-        getRecommendations
-    };
-})();
-
-// Export du module pour utilisation dans d'autres fichiers
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = testsData;
-}
+    ]
+};
