@@ -1,4 +1,6 @@
-// tests.js - Module simplifié pour la passation des tests
+// tests.js - Version mise à jour utilisant les objets globaux
+// Utiliser une structure IIFE au lieu de modules ES6
+
 const Tests = (function() {
     // Variables privées
     let currentTest = null;
@@ -22,7 +24,8 @@ const Tests = (function() {
             // Afficher la première question
             displayCurrentQuestion();
             
-            // Afficher la section de test
+            // Afficher la section de test en utilisant une fonction globale
+            // Supposons que showSection est définie ailleurs dans votre code
             showSection('test-content');
             
             // Mettre à jour le titre du test
@@ -301,9 +304,10 @@ const Tests = (function() {
             let testResults = [];
             
             try {
-                const savedResults = localStorage.getItem('bilanVital_testResults');
+                // Utiliser l'objet Storage global
+                const savedResults = Storage.getData('testResults');
                 if (savedResults) {
-                    testResults = JSON.parse(savedResults);
+                    testResults = savedResults;
                 }
             } catch (e) {
                 console.warn('Erreur lors de la récupération des résultats précédents:', e);
@@ -312,8 +316,8 @@ const Tests = (function() {
             // Ajouter le nouveau résultat
             testResults.push(scores);
             
-            // Sauvegarder dans le localStorage
-            localStorage.setItem('bilanVital_testResults', JSON.stringify(testResults));
+            // Sauvegarder dans le localStorage en utilisant l'objet Storage global
+            Storage.saveData('testResults', testResults);
             
             console.log('Résultats du test sauvegardés avec succès');
         } catch (error) {
@@ -329,13 +333,23 @@ const Tests = (function() {
             const modal = document.createElement('div');
             modal.className = 'results-modal';
             
+            // Déterminer la classe de couleur en fonction du score
+            let scoreColorClass = '';
+            if (scores.globalScore < 40) {
+                scoreColorClass = 'score-low';
+            } else if (scores.globalScore < 70) {
+                scoreColorClass = 'score-medium';
+            } else {
+                scoreColorClass = 'score-high';
+            }
+            
             // Contenu du modal
             modal.innerHTML = `
                 <div class="results-content">
                     <h2>Résultats du test: ${scores.testName}</h2>
                     
                     <div class="result-score">
-                        <div class="score-circle large">
+                        <div class="score-circle large ${scoreColorClass}">
                             <span>${scores.globalScore}</span>
                         </div>
                         <p>Votre score global</p>
