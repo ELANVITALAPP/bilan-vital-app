@@ -1,4 +1,4 @@
-// testsData.js - Version simplifiée contenant tous les tests originaux
+// testsData.js - Version complète avec interprétations améliorées
 const testsData = {
     categories: [
         {
@@ -647,7 +647,7 @@ const testsData = {
             tests: [
                 {
                     id: "force-jambes",
-                    name: "Test de Force Membres Inférieurs",
+                    name: "Force des Membres Inférieurs",
                     description: "Évaluez la force et l'endurance de vos jambes",
                     duration: "2",
                     difficulty: 2,
@@ -670,7 +670,14 @@ const testsData = {
                             ],
                             maxScore: 5
                         }
-                    ]
+                    ],
+                    interpretations: {
+                        1: "Votre force des membres inférieurs présente un potentiel d'amélioration important. Commencez par des exercices simples comme se lever d'une chaise avec appui, puis progressez vers des exercices sans appui. Des séances régulières de pilates sur chaise vous aideront à renforcer vos jambes en douceur.",
+                        2: "Votre force des membres inférieurs est en développement. Intégrez des exercices de lever de chaise dans votre routine quotidienne. Les séances de pilates axées sur les jambes vous aideront à progresser et à gagner en autonomie.",
+                        3: "Votre force des membres inférieurs est dans la moyenne. Continuez à la développer avec des exercices réguliers comme les squats partiels et les montées de marche. Les séances de pilates vous aideront à améliorer votre technique et votre endurance.",
+                        4: "Votre force des membres inférieurs est bonne. Vous pouvez maintenant vous concentrer sur des exercices plus dynamiques et diversifiés. Essayez les séances de pilates intermédiaires qui combinent force et mobilité.",
+                        5: "Votre force des membres inférieurs est excellente ! Maintenez-la avec des exercices variés et progressifs. Vous pouvez explorer des séances de pilates avancées pour continuer à développer votre force, votre équilibre et votre coordination."
+                    }
                 },
                 {
                     id: "souplesse-epaules",
@@ -696,7 +703,14 @@ const testsData = {
                             ],
                             maxScore: 5
                         }
-                    ]
+                    ],
+                    interpretations: {
+                        1: "Votre souplesse des épaules est limitée, ce qui peut affecter vos mouvements quotidiens. Commencez par des étirements doux et progressifs des épaules, en évitant toute douleur. Les exercices de mobilité des épaules en position assise sont parfaits pour débuter en toute sécurité.",
+                        2: "Votre souplesse des épaules est en développement. Pratiquez régulièrement des exercices d'ouverture de la poitrine et de mobilisation des omoplates. Les séances d'étirements ciblés amélioreront progressivement votre amplitude de mouvement.",
+                        3: "Votre souplesse des épaules est moyenne. Continuez à l'améliorer avec des exercices de rotation des épaules et d'étirements de la ceinture scapulaire. Les séances de mobilité vous aideront à gagner en aisance dans vos mouvements quotidiens.",
+                        4: "Votre souplesse des épaules est bonne. Maintenez-la par une pratique régulière et diversifiée. Les exercices de pilates qui combinent mobilité et stabilité des épaules vous permettront de conserver cette qualité importante.",
+                        5: "Votre souplesse des épaules est excellente ! Continuez à l'entretenir tout en travaillant également le renforcement musculaire pour un équilibre optimal. Vous pouvez explorer des mouvements plus complexes dans vos séances de pilates ou d'étirements."
+                    }
                 },
                 {
                     id: "souplesse-dos",
@@ -722,7 +736,14 @@ const testsData = {
                             ],
                             maxScore: 5
                         }
-                    ]
+                    ],
+                    interpretations: {
+                        1: "Votre souplesse du dos et de l'arrière des jambes est très limitée. Commencez par des étirements en position assise, en inclinant doucement le buste vers l'avant. Des séances d'étirements sur chaise vous permettront d'améliorer progressivement votre souplesse sans risque.",
+                        2: "Votre souplesse du dos présente un potentiel d'amélioration. Pratiquez régulièrement des exercices d'étirement de la chaîne postérieure en position assise ou allongée. Les séances de mobilité du dos amélioreront votre confort au quotidien.",
+                        3: "Votre souplesse du dos est moyenne. Continuez à l'améliorer avec des exercices d'étirement réguliers. Les séances de pilates centrées sur la mobilité vertébrale vous aideront à progresser harmonieusement.",
+                        4: "Votre souplesse du dos est bonne. Maintenez-la avec une pratique variée combinant mobilité et stabilité. Les exercices d'étirement et de renforcement vous permettront de conserver une colonne vertébrale saine et mobile.",
+                        5: "Votre souplesse du dos est excellente ! Continuez à l'entretenir tout en veillant au bon équilibre entre souplesse et renforcement musculaire. Vous pouvez explorer des postures plus avancées dans vos séances de pilates."
+                    }
                 },
                 {
                     id: "equilibre-statique",
@@ -749,7 +770,14 @@ const testsData = {
                             ],
                             maxScore: 5
                         }
-                    ]
+                    ],
+                    interpretations: {
+                        1: "Votre équilibre statique présente un fort potentiel d'amélioration. Commencez par des exercices d'équilibre avec soutien (contre un mur ou une chaise). Pratiquez régulièrement des exercices simples comme rester debout avec les pieds écartés puis progressivement rapprochés. Les séances d'équilibre sur chaise vous aideront à renforcer vos stabilisateurs en toute sécurité.",
+                        2: "Votre équilibre statique est en développement. Travaillez-le quotidiennement avec des exercices d'équilibre progressifs, en diminuant graduellement le soutien. Les exercices de pilates axés sur la stabilisation du tronc amélioreront votre équilibre global.",
+                        3: "Votre équilibre statique est moyen. Continuez à le développer avec des exercices réguliers comme rester sur une jambe ou faire des transferts de poids. Les séances combinant force et équilibre vous aideront à progresser efficacement.",
+                        4: "Votre équilibre statique est bon. Maintenez-le avec des exercices variés et progressifs. Vous pouvez intégrer des mouvements plus complexes ou des surfaces instables pour continuer à progresser.",
+                        5: "Votre équilibre statique est excellent ! Continuez à le mettre au défi avec des exercices avancés et des combinaisons de mouvements. Les séances de pilates ou d'équilibre dynamique vous permettront de maintenir cette capacité essentielle."
+                    }
                 },
                 {
                     id: "equilibre-dynamique",
@@ -775,7 +803,14 @@ const testsData = {
                             ],
                             maxScore: 5
                         }
-                    ]
+                    ],
+                    interpretations: {
+                        1: "Votre équilibre dynamique présente un fort potentiel d'amélioration. Commencez par des exercices de marche avec un soutien (main courante, canne ou accompagnement). Pratiquez des déplacements contrôlés dans un environnement sécurisé. Les exercices de transfert de poids en position assise ou debout avec appui vous aideront à progresser.",
+                        2: "Votre équilibre dynamique est en développement. Travaillez-le avec des exercices de marche contrôlée, en diminuant progressivement le soutien. Les exercices de coordination et de conscience corporelle amélioreront votre stabilité lors des déplacements.",
+                        3: "Votre équilibre dynamique est moyen. Continuez à le développer avec des exercices plus complexes comme la marche avec changements de direction ou sur des surfaces variées. Les séances combinant équilibre et renforcement musculaire vous aideront à progresser harmonieusement.",
+                        4: "Votre équilibre dynamique est bon. Maintenez-le avec des exercices variés et progressifs. Vous pouvez intégrer des défis comme marcher sur des surfaces instables ou avec des mouvements de tête pour stimuler davantage votre système d'équilibration.",
+                        5: "Votre équilibre dynamique est excellent ! Continuez à le maintenir avec des exercices avancés combinant déplacements, obstacles et doubles tâches. Votre bonne stabilité en mouvement est un atout précieux pour rester actif et autonome."
+                    }
                 },
                 {
                     id: "endurance",
@@ -802,11 +837,18 @@ const testsData = {
                             ],
                             maxScore: 5
                         }
-                    ]
+                    ],
+                    interpretations: {
+                        1: "Votre endurance cardiovasculaire présente un potentiel d'amélioration important. Commencez par des activités très douces comme la marche lente ou des exercices assis avec des pauses fréquentes. Augmentez progressivement la durée avant l'intensité. Les séances de respiration et de mobilisation douce sont parfaites pour débuter.",
+                        2: "Votre endurance cardiovasculaire est en développement. Pratiquez régulièrement des activités d'intensité légère comme la marche ou les exercices sur chaise. Augmentez progressivement la durée de vos sessions en respectant vos sensations. Les séances combinant respiration et mouvement amélioreront votre capacité cardio-respiratoire.",
+                        3: "Votre endurance cardiovasculaire est moyenne. Continuez à la développer avec des activités régulières d'intensité modérée. Alternez entre différents types d'exercices (marche, vélo, natation...) pour stimuler votre système cardiovasculaire de façon variée.",
+                        4: "Votre endurance cardiovasculaire est bonne. Maintenez-la avec des activités variées et régulières. Vous pouvez intégrer quelques intervalles d'intensité plus élevée pour continuer à progresser tout en gardant des sessions plus longues à intensité modérée.",
+                        5: "Votre endurance cardiovasculaire est excellente ! Continuez à la maintenir avec des activités variées et régulières. Votre bonne capacité cardio-respiratoire est un atout majeur pour votre santé globale et votre qualité de vie."
+                    }
                 },
                 {
                     id: "force-abdos",
-                    name: "Force des abdominaux (Test Shirado-Ito)",
+                    name: "Force des abdominaux",
                     description: "Évaluez la force et l'endurance de vos muscles abdominaux",
                     duration: "3-5",
                     difficulty: 2,
@@ -829,11 +871,18 @@ const testsData = {
                             ],
                             maxScore: 5
                         }
-                    ]
+                    ],
+                    interpretations: {
+                        1: "Votre force abdominale présente un potentiel d'amélioration important. Commencez par des exercices de base comme la respiration abdominale et de légères contractions en position allongée. Les exercices sur chaise qui engagent le tronc vous aideront à développer progressivement votre ceinture abdominale sans contrainte excessive sur le dos.",
+                        2: "Votre force abdominale est en développement. Pratiquez régulièrement des exercices d'engagement du tronc en position allongée et assise. Les exercices de pilates fondamentaux, comme l'imprint (aplatissement du bas du dos), sont parfaits pour renforcer progressivement vos abdominaux.",
+                        3: "Votre force abdominale est moyenne. Continuez à la développer avec des exercices variés qui sollicitent différentes parties des abdominaux. Les séances de pilates de niveau intermédiaire vous permettront de progresser en maintenant un bon alignement de la colonne.",
+                        4: "Votre force abdominale est bonne. Maintenez-la avec des exercices diversifiés, en intégrant des mouvements qui combinent stabilité et mobilité. Vous pouvez explorer des variations plus complexes qui sollicitent les abdominaux profonds et les muscles obliques.",
+                        5: "Votre force abdominale est excellente ! Continuez à la maintenir avec des exercices avancés tout en veillant à l'équilibre entre les différents groupes musculaires. Votre bonne stabilité centrale est un atout majeur pour protéger votre dos et améliorer vos performances dans toutes les activités."
+                    }
                 },
                 {
                     id: "force-dos",
-                    name: "Force du dos (Test de Sorensen)",
+                    name: "Force du dos",
                     description: "Évaluez la force et l'endurance des muscles de votre dos",
                     duration: "3-5",
                     difficulty: 2,
@@ -856,11 +905,18 @@ const testsData = {
                             ],
                             maxScore: 5
                         }
-                    ]
+                    ],
+                    interpretations: {
+                        1: "Votre force dorsale présente un potentiel d'amélioration important. Commencez par des exercices doux de mobilisation du dos en position allongée ou à quatre pattes. Les exercices de renforcement progressif sans charge comme l'extension de colonne en position assise vous permettront de développer en douceur les muscles du dos.",
+                        2: "Votre force dorsale est en développement. Pratiquez régulièrement des exercices ciblés comme les extensions partielles du dos en position allongée et les mouvements de mobilisation de la colonne. Les exercices de pilates fondamentaux aideront à renforcer les muscles profonds du dos.",
+                        3: "Votre force dorsale est moyenne. Continuez à la développer avec des exercices variés qui sollicitent les différents muscles du dos. Les séances combinant stabilisation et mobilisation progressive de la colonne vous permettront d'améliorer harmonieusement cette zone importante.",
+                        4: "Votre force dorsale est bonne. Maintenez-la avec des exercices diversifiés et progressifs. Vous pouvez explorer des mouvements plus complexes qui intègrent la coordination des bras et des jambes tout en stabilisant le dos.",
+                        5: "Votre force dorsale est excellente ! Continuez à la maintenir avec des exercices avancés tout en veillant à l'équilibre entre les différents groupes musculaires. Votre bonne force du dos est un atout majeur pour prévenir les douleurs et maintenir une posture correcte au quotidien."
+                    }
                 },
                 {
                     id: "force-bras",
-                    name: "Force des membres supérieurs (Arm Curl)",
+                    name: "Force des membres supérieurs",
                     description: "Évaluez la force et l'endurance des muscles de vos bras",
                     duration: "2-3",
                     difficulty: 2,
@@ -883,7 +939,14 @@ const testsData = {
                             ],
                             maxScore: 5
                         }
-                    ]
+                    ],
+                    interpretations: {
+                        1: "Votre force des bras présente un potentiel d'amélioration important. Commencez par des exercices sans poids ou avec des poids très légers, en effectuant des mouvements contrôlés avec peu de répétitions. Les exercices de pilates sur chaise qui engagent les bras vous aideront à développer progressivement votre force sans surcharge.",
+                        2: "Votre force des bras est en développement. Pratiquez régulièrement des exercices avec des poids légers, en augmentant progressivement le nombre de répétitions avant d'augmenter la charge. Les exercices de renforcement qui utilisent le poids du corps ou de petits accessoires sont parfaits à ce stade.",
+                        3: "Votre force des bras est moyenne. Continuez à la développer avec des exercices variés qui sollicitent différents groupes musculaires. Alternez entre des séances avec plus de répétitions et des séances avec des charges légèrement plus lourdes pour stimuler vos muscles de façon optimale.",
+                        4: "Votre force des bras est bonne. Maintenez-la avec des exercices diversifiés, en intégrant des mouvements qui combinent plusieurs articulations. Vous pouvez explorer des variations plus complexes et des charges modérées pour continuer à progresser harmonieusement.",
+                        5: "Votre force des bras est excellente ! Continuez à la maintenir avec des exercices avancés tout en veillant à l'équilibre entre les différents groupes musculaires. Votre bonne force des membres supérieurs est un atout précieux pour l'autonomie dans les activités quotidiennes."
+                    }
                 }
             ]
         }
