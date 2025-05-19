@@ -1,218 +1,137 @@
-/**
- * Module principal de l'application Bilan Vital
- * Coordonne les différents modules et gère l'initialisation de l'application
- */
+// app.js - Version simplifiée
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialisation de l'application
+    console.log('Initialisation de Bilan Vital - Version simplifiée');
+    
+    // Gestion de la navigation simplifiée
+    initNavigation();
+    
+    // Chargement des tests
+    loadTests();
+    
+    // Chargement du bilan si des données existent
+    loadBilan();
+});
 
-// Utilisons un IIFE pour éviter les conflits de noms
-const appModule = (function() {
-    // Dépendances
-    let userModule;
-    let testsModule;
-    let bilanModule;
-    let plannerModule;
-    let todaySessionModule;
+// Navigation simplifiée
+function initNavigation() {
+    // Boutons de navigation principale
+    document.getElementById('show-tests').addEventListener('click', function() {
+        showSection('tests-list');
+    });
     
-    // États de l'application
-    let isInitialized = false;
-    let currentUser = null;
+    document.getElementById('show-bilan').addEventListener('click', function() {
+        showSection('bilan');
+    });
     
-    /**
-     * Initialise l'application et tous ses modules
-     */
-    function initialize() {
-        console.log('Initialisation de l\'application Bilan Vital');
-        
-        try {
-            // Initialisation des modules
-            initModules();
-            
-            // Gestion des événements globaux
-            setupEventListeners();
-            
-            // Vérification de l'utilisateur
-            checkUserAuthentication();
-            
-            // Marquer comme initialisé
-            isInitialized = true;
-            
-            console.log('Application Bilan Vital initialisée avec succès');
-            
-            // Montrer le contenu principal
-            showMainContent();
-            
-            return true;
-        } catch (error) {
-            console.error('Erreur lors de l\'initialisation de l\'application:', error);
-            showErrorMessage('Une erreur est survenue lors du chargement de l\'application.');
-            return false;
-        }
+    // Boutons retour
+    document.getElementById('back-to-home').addEventListener('click', function() {
+        showSection('welcome');
+    });
+    
+    document.getElementById('back-from-bilan').addEventListener('click', function() {
+        showSection('welcome');
+    });
+    
+    // Navigation dans les tests
+    document.getElementById('prev-question').addEventListener('click', function() {
+        Tests.previousQuestion();
+    });
+    
+    document.getElementById('next-question').addEventListener('click', function() {
+        Tests.nextQuestion();
+    });
+}
+
+// Fonction pour afficher une section et masquer les autres
+function showSection(sectionId) {
+    // Masquer toutes les sections
+    document.querySelectorAll('main > section').forEach(section => {
+        section.classList.add('hidden');
+        section.classList.remove('active');
+    });
+    
+    // Afficher la section demandée
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) {
+        targetSection.classList.remove('hidden');
+        targetSection.classList.add('active');
     }
-    
-    /**
-     * Initialise tous les modules de l'application
-     */
-    function initModules() {
-        console.log('Initialisation des modules...');
+}
+
+// Fonction pour charger les tests disponibles
+function loadTests() {
+    try {
+        const testsContainer = document.getElementById('tests-container');
         
-        // Récupération des références aux modules (s'ils existent dans la portée globale)
-        userModule = window.userData || null;
-        if (!userModule) console.warn('Module userData non disponible');
-        
-        testsModule = window.testsModule || null;
-        if (!testsModule) console.warn('Module testsModule non disponible');
-        
-        bilanModule = window.bilanModule || null;
-        if (!bilanModule) console.warn('Module bilanModule non disponible');
-        
-        plannerModule = window.plannerModule || null;
-        if (!plannerModule) console.warn('Module plannerModule non disponible');
-        
-        todaySessionModule = window.todaySessionModule || null;
-        if (!todaySessionModule) console.warn('Module todaySessionModule non disponible');
-    }
-    
-    /**
-     * Configure les écouteurs d'événements globaux
-     */
-    function setupEventListeners() {
-        // Gestionnaire d'événements pour la déconnexion
-        const logoutButton = document.getElementById('logout-button');
-        if (logoutButton) {
-            logoutButton.addEventListener('click', logout);
+        // Vérifier si les données de test sont disponibles
+        if (!testsData || !Array.isArray(testsData.categories)) {
+            throw new Error('Les données de test ne sont pas disponibles');
         }
         
-        // Autres écouteurs d'événements globaux...
+        // Vider le conteneur
+        testsContainer.innerHTML = '';
+        
+        // Ajouter chaque catégorie et ses tests
+        testsData.categories.forEach(category => {
+            // Créer l'élément de catégorie
+            const categoryEl = document.createElement('div');
+            categoryEl.className = 'test-category';
+            categoryEl.innerHTML = `
+                <h3>${category.name}</h3>
+                <div class="category-tests"></div>
+            `;
+            
+            const testsEl = categoryEl.querySelector('.category-tests');
+            
+            // Ajouter chaque test
+            category.tests.forEach(test => {
+                const testEl = document.createElement('div');
+                testEl.className = 'test-card';
+                testEl.innerHTML = `
+                    <h4>${test.name}</h4>
+                    <p>${test.description || 'Aucune description disponible'}</p>
+                    <span class="test-duration">${test.duration || '5-10'} min</span>
+                    <button class="btn-start-test" data-test-id="${test.id}">Commencer</button>
+                `;
+                
+                testsEl.appendChild(testEl);
+            });
+            
+            testsContainer.appendChild(categoryEl);
+        });
+        
+        // Ajouter les écouteurs d'événements pour démarrer les tests
+        document.querySelectorAll('.btn-start-test').forEach(button => {
+            button.addEventListener('click', function() {
+                const testId = this.getAttribute('data-test-id');
+                Tests.startTest(testId);
+            });
+        });
+    } catch (error) {
+        console.error('Erreur lors du chargement des tests:', error);
+        
+        // Afficher un message d'erreur
+        const testsContainer = document.getElementById('tests-container');
+        testsContainer.innerHTML = `
+            <div class="error-message">
+                <p>Impossible de charger les tests. Erreur: ${error.message}</p>
+                <p>Veuillez réessayer ultérieurement ou contacter le support.</p>
+            </div>
+        `;
     }
-    
-    /**
-     * Vérifie l'authentification de l'utilisateur
-     */
-    function checkUserAuthentication() {
-        if (userModule) {
-            try {
-                currentUser = userModule.getUserProfile();
-                if (currentUser) {
-                    console.log('Utilisateur connecté:', currentUser.name);
-                    updateUIForLoggedInUser(currentUser);
-                } else {
-                    console.log('Aucun utilisateur connecté');
-                    showWelcomeScreen();
-                }
-            } catch (error) {
-                console.error('Erreur lors de la vérification de l\'utilisateur:', error);
-                showWelcomeScreen();
-            }
+}
+
+// Fonction pour charger le bilan récapitulatif
+function loadBilan() {
+    try {
+        // Vérifier si la fonction Bilan.loadUserData existe
+        if (typeof Bilan !== 'undefined' && typeof Bilan.loadUserData === 'function') {
+            Bilan.loadUserData();
         } else {
-            console.log('Module utilisateur non disponible, affichage du mode invité');
-            showWelcomeScreen();
+            console.warn('Module Bilan non disponible ou incomplet');
         }
+    } catch (error) {
+        console.error('Erreur lors du chargement du bilan:', error);
     }
-    
-    /**
-     * Met à jour l'interface pour un utilisateur connecté
-     */
-    function updateUIForLoggedInUser(user) {
-        const welcomeMessage = document.querySelector('.welcome p');
-        if (welcomeMessage) {
-            welcomeMessage.textContent = `Bonjour ${user.name} ! Bienvenue sur votre espace Bilan Vital.`;
-        }
-        
-        // Mise à jour des autres éléments de l'interface...
-    }
-    
-    /**
-     * Affiche l'écran de bienvenue pour les utilisateurs non connectés
-     */
-    function showWelcomeScreen() {
-        const welcomeMessage = document.querySelector('.welcome p');
-        if (welcomeMessage) {
-            welcomeMessage.textContent = 'Bienvenue sur l\'application Bilan Vital. Évaluez votre santé et votre bien-être avec des tests personnalisés.';
-        }
-        
-        // Autres modifications de l'interface pour les utilisateurs non connectés...
-    }
-    
-    /**
-     * Affiche le contenu principal après l'initialisation
-     */
-    function showMainContent() {
-        // Masquer les messages de secours
-        const fallbackMessages = document.querySelectorAll('.fallback-message');
-        fallbackMessages.forEach(message => {
-            message.style.display = 'none';
-        });
-        
-        // Afficher les conteneurs de contenu
-        const contentContainers = [
-            document.getElementById('tests-container'),
-            document.getElementById('bilan-container'),
-            document.getElementById('planification-container'),
-            document.getElementById('seance-container')
-        ];
-        
-        contentContainers.forEach(container => {
-            if (container) {
-                container.classList.remove('hidden');
-            }
-        });
-        
-        // Masquer l'indicateur de chargement
-        const loadingIndicator = document.getElementById('loading-indicator');
-        if (loadingIndicator) {
-            loadingIndicator.classList.add('hidden');
-        }
-    }
-    
-    /**
-     * Affiche un message d'erreur à l'utilisateur
-     */
-    function showErrorMessage(message) {
-        const welcomeSection = document.querySelector('.welcome');
-        if (welcomeSection) {
-            const errorMessage = document.createElement('div');
-            errorMessage.className = 'error-message';
-            errorMessage.style.color = 'red';
-            errorMessage.style.marginTop = '15px';
-            errorMessage.style.padding = '10px';
-            errorMessage.style.border = '1px solid red';
-            errorMessage.style.borderRadius = '5px';
-            errorMessage.textContent = message;
-            welcomeSection.appendChild(errorMessage);
-        }
-    }
-    
-    /**
-     * Déconnecte l'utilisateur actuel
-     */
-    function logout() {
-        console.log('Déconnexion de l\'utilisateur');
-        if (userModule) {
-            try {
-                // Opérations de déconnexion...
-                currentUser = null;
-                showWelcomeScreen();
-                console.log('Utilisateur déconnecté avec succès');
-            } catch (error) {
-                console.error('Erreur lors de la déconnexion:', error);
-            }
-        }
-        // Pour l'instant, rechargeons simplement la page
-        window.location.reload();
-    }
-    
-    // Initialisation automatique au chargement du DOM
-    document.addEventListener('DOMContentLoaded', initialize);
-    
-    // Expose l'API publique
-    return {
-        initialize: initialize,
-        logout: logout
-    };
-})();
-
-// Export du module pour utilisation dans d'autres fichiers
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = appModule;
-} else {
-    window.appModule = appModule;
 }
