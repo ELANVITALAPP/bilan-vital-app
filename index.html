@@ -3,246 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bilan Vital</title>
-    
-    <!-- Script de diagnostic -->
-    <script>
-        console.log('Répertoire de base:', window.location.href);
-        console.log('Chemin complet:', window.location.pathname);
-        
-        // Fonction pour suivre le chargement des scripts
-        function scriptLoaded(name) {
-            console.log("✅ Script chargé : " + name);
-        }
-        
-        // Variable globale pour stocker les modules
-        window.AppModules = {};
-    </script>
-    
-    <!-- Styles CSS -->
-    <link rel="stylesheet" href="/bilan-vital-app/CSS/variables.css">
-    <link rel="stylesheet" href="/bilan-vital-app/CSS/style.css">
-    <link rel="stylesheet" href="/bilan-vital-app/CSS/responsive.css">
-    <link rel="stylesheet" href="/bilan-vital-app/CSS/postcss.css">
-    
-    <style>
-        /* Styles de base en cas de problème avec les fichiers CSS */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        header {
-            padding: 20px 0;
-            border-bottom: 3px solid #00813F;
-            margin-bottom: 20px;
-        }
-        
-        h1 {
-            color: #00813F;
-            font-size: 2.5rem;
-            font-weight: 700;
-        }
-        
-        nav ul {
-            list-style: none;
-            display: flex;
-            border-bottom: 1px solid #ddd;
-            padding: 0;
-        }
-        
-        nav li {
-            margin-right: 30px;
-        }
-        
-        nav a {
-            display: block;
-            padding: 10px 0;
-            color: #00813F;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        
-        section {
-            margin-bottom: 40px;
-        }
-        
-        .welcome {
-            background-color: #f5f5f5;
-            padding: 25px;
-            border-radius: 5px;
-            border-left: 5px solid #00813F;
-            margin-bottom: 40px;
-        }
-        
-        h2 {
-            color: #006633;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 20px;
-            font-style: italic;
-            color: #666;
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        footer {
-            margin-top: 50px;
-            padding: 20px 0;
-            border-top: 1px solid #ddd;
-            text-align: center;
-            color: #666;
-        }
-    </style>
+    <title>Bilan Vital - Version Simplifiée</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <!-- Polices -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
         <h1>Bilan Vital</h1>
     </header>
-    
-    <nav>
-        <ul>
-            <li><a href="#tests">Tests</a></li>
-            <li><a href="#bilan">Bilan</a></li>
-            <li><a href="#planification">Planification</a></li>
-            <li><a href="#seance">Séance du jour</a></li>
-        </ul>
-    </nav>
-    
-    <main id="mainContent">
-        <section class="welcome">
+
+    <main>
+        <section id="welcome" class="active">
             <h2>Bienvenue sur l'application Bilan Vital</h2>
             <p>Évaluez votre santé et votre bien-être avec des tests personnalisés et recevez des recommandations adaptées.</p>
-            <div id="loading-indicator" class="loading">Chargement de l'application...</div>
-        </section>
-        
-        <section id="tests">
-            <h2>Tests</h2>
-            <div id="tests-container">
-                <p class="fallback-message">Cette section est en cours de développement. Elle vous permettra bientôt d'accéder à différents tests pour évaluer votre condition physique et mentale.</p>
+            
+            <div class="main-options">
+                <div class="option-card" id="show-tests">
+                    <h3>Tests de santé</h3>
+                    <p>Évaluez votre condition physique, mentale et émotionnelle grâce à nos tests personnalisés.</p>
+                    <button class="btn-primary">Découvrir</button>
+                </div>
+                
+                <div class="option-card" id="show-bilan">
+                    <h3>Bilan personnel</h3>
+                    <p>Consultez le récapitulatif de vos résultats et suivez votre progression dans le temps.</p>
+                    <button class="btn-primary">Découvrir</button>
+                </div>
             </div>
         </section>
-        
-        <section id="bilan">
-            <h2>Bilan</h2>
-            <div id="bilan-container">
-                <p class="fallback-message">Cette section est en cours de développement. Elle vous permettra bientôt de consulter le récapitulatif de vos résultats et de votre progression.</p>
+
+        <section id="tests-list" class="hidden">
+            <h2>Tests de santé</h2>
+            <p>Sélectionnez un test pour commencer votre évaluation :</p>
+            
+            <div id="tests-container" class="tests-grid">
+                <!-- Tests seront ajoutés dynamiquement ici -->
+                <div class="loading">Chargement des tests...</div>
+            </div>
+            
+            <button id="back-to-home" class="btn-secondary">Retour à l'accueil</button>
+        </section>
+
+        <section id="test-content" class="hidden">
+            <h2 id="test-title">Nom du test</h2>
+            <div class="test-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="progress-text">Question <span id="current-question">1</span>/<span id="total-questions">10</span></div>
+            </div>
+            
+            <div id="question-container">
+                <!-- Questions seront ajoutées dynamiquement ici -->
+            </div>
+            
+            <div class="test-navigation">
+                <button id="prev-question" class="btn-secondary">Précédent</button>
+                <button id="next-question" class="btn-primary">Suivant</button>
             </div>
         </section>
-        
-        <section id="planification">
-            <h2>Planification</h2>
-            <div id="planification-container">
-                <p class="fallback-message">Cette section est en cours de développement. Elle vous permettra bientôt de planifier vos activités hebdomadaires en fonction de vos objectifs.</p>
+
+        <section id="bilan" class="hidden">
+            <h2>Votre bilan personnel</h2>
+            
+            <div class="score-overview">
+                <div class="vital-score">
+                    <h3>VitalScore</h3>
+                    <div class="score-circle">
+                        <span id="vital-score-value">--</span>
+                    </div>
+                </div>
+                
+                <div class="category-scores">
+                    <h3>Scores par catégorie</h3>
+                    <div id="category-scores-container">
+                        <!-- Scores de catégories ajoutés dynamiquement ici -->
+                        <p class="no-data">Complétez au moins un test pour voir vos scores par catégorie.</p>
+                    </div>
+                </div>
             </div>
-        </section>
-        
-        <section id="seance">
-            <h2>Séance du jour</h2>
-            <div id="seance-container">
-                <p class="fallback-message">Cette section est en cours de développement. Elle vous proposera bientôt des séances quotidiennes adaptées à votre profil.</p>
+            
+            <div class="test-history">
+                <h3>Historique des tests</h3>
+                <div id="test-history-container">
+                    <!-- Historique ajouté dynamiquement ici -->
+                    <p class="no-data">Aucun test complété pour le moment.</p>
+                </div>
             </div>
+            
+            <button id="back-from-bilan" class="btn-secondary">Retour à l'accueil</button>
         </section>
     </main>
-    
+
     <footer>
-        <p>&copy; 2025 Bilan Vital - Tous droits réservés</p>
+        <p>&copy; 2025 Bilan Vital - Version simplifiée</p>
     </footer>
 
-    <!-- CHARGEMENT DES SCRIPTS DANS L'ORDRE CORRECT -->
-    <!-- 1. Utilitaires de base - helpers d'abord -->
-    <script src="/bilan-vital-app/JS/helpers.js" onload="scriptLoaded('helpers.js')"></script>
-    
-    <!-- 2. Système de stockage -->
-    <script src="/bilan-vital-app/JS/stockage.js" onload="scriptLoaded('stockage.js')"></script>
-    
-    <!-- 3. Module de données utilisateur -->
-    <script src="/bilan-vital-app/JS/data/userData.js" onload="scriptLoaded('userData.js')"></script>
-    
-    <!-- 4. Modules de données et charts -->
-    <script src="/bilan-vital-app/JS/data/testsData.js" onload="scriptLoaded('testsData.js')"></script>
-    <script src="/bilan-vital-app/JS/charts.js" onload="scriptLoaded('charts.js')"></script>
-    
-    <!-- 5. Modules de composants -->
-    <script src="/bilan-vital-app/JS/components/tests.js" onload="scriptLoaded('tests.js')"></script>
-    <script src="/bilan-vital-app/JS/components/bilan.js" onload="scriptLoaded('bilan.js')"></script>
-    <script src="/bilan-vital-app/JS/components/planner.js" onload="scriptLoaded('planner.js')"></script>
-    <script src="/bilan-vital-app/JS/components/todaySession.js" onload="scriptLoaded('todaySession.js')"></script>
-    
-    <!-- 6. Navigation (dépend des composants) -->
-    <script src="/bilan-vital-app/JS/navigation.js" onload="scriptLoaded('navigation.js')"></script>
-    
-    <!-- 7. Application principale (doit être chargée en dernier) -->
-    <script src="/bilan-vital-app/JS/app.js" onload="scriptLoaded('app.js')"></script>
-    
-    <!-- Script d'initialisation de secours -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Script d\'initialisation de base chargé');
-            
-            // Cache l'indicateur de chargement après 2 secondes
-            setTimeout(function() {
-                const loadingIndicator = document.getElementById('loading-indicator');
-                if (loadingIndicator) {
-                    loadingIndicator.classList.add('hidden');
-                }
-            }, 2000);
-        });
-    </script>
-    
-    <!-- NOUVEAU SCRIPT DE DIAGNOSTIC -->
-    <script>
-      // Script de diagnostic
-      document.addEventListener('DOMContentLoaded', function() {
-        // Vérifie si les modules sont disponibles
-        console.log('--- DIAGNOSTIC DES MODULES ---');
-        console.log('app:', typeof window.appModule);
-        console.log('userData:', typeof window.userData);
-        console.log('testsModule:', typeof window.testsModule);
-        console.log('bilanModule:', typeof window.bilanModule);
-        console.log('plannerModule:', typeof window.plannerModule);
-        console.log('todaySessionModule:', typeof window.todaySessionModule);
-        
-        // Masque l'indicateur de chargement
-        setTimeout(function() {
-          const loadingIndicator = document.getElementById('loading-indicator');
-          if (loadingIndicator) {
-            loadingIndicator.classList.add('hidden');
-            console.log('Indicateur de chargement masqué manuellement');
-          }
-          
-          // Message temporaire dans chaque section
-          const sections = ['tests-container', 'bilan-container', 'planification-container', 'seance-container'];
-          sections.forEach(function(id) {
-            const container = document.getElementById(id);
-            if (container) {
-              // Masquer le message de fallback
-              const fallback = container.querySelector('.fallback-message');
-              if (fallback) fallback.style.display = 'none';
-              
-              // Ajouter un message temporaire
-              const tempMessage = document.createElement('p');
-              tempMessage.textContent = 'Cette section est opérationnelle. Contenu à venir prochainement.';
-              tempMessage.style.padding = '20px';
-              tempMessage.style.background = '#f0f8f0';
-              tempMessage.style.border = '1px solid #00813F';
-              tempMessage.style.borderRadius = '5px';
-              container.appendChild(tempMessage);
-            }
-          });
-        }, 1000);
-      });
-    </script>
+    <!-- Scripts -->
+    <script src="js/utils/helpers.js"></script>
+    <script src="js/utils/storage.js"></script>
+    <script src="js/data/tests-data.js"></script>
+    <script src="js/data/user-data.js"></script>
+    <script src="js/components/tests.js"></script>
+    <script src="js/components/bilan.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
