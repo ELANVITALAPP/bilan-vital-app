@@ -1,31 +1,31 @@
-// bilan.js - Module simplifié pour le bilan récapitulatif
+// bilan.js - Exemple de mise à jour pour éliminer les imports/exports
+// Utiliser une structure globale (IIFE) au lieu de modules ES6
+
 const Bilan = (function() {
+    // Variables privées
+    let userResults = [];
+    
     // Fonction pour charger les données utilisateur
     function loadUserData() {
         try {
-            // Récupérer les résultats des tests depuis le localStorage
-            const savedResults = localStorage.getItem('bilanVital_testResults');
+            // Utiliser l'objet Storage global au lieu d'import
+            const savedResults = Storage.getData('testResults');
             
-            if (!savedResults) {
+            if (!savedResults || !Array.isArray(savedResults) || savedResults.length === 0) {
                 displayNoDataMessage();
                 return;
             }
             
-            const testResults = JSON.parse(savedResults);
-            
-            if (!testResults || testResults.length === 0) {
-                displayNoDataMessage();
-                return;
-            }
+            userResults = savedResults;
             
             // Afficher les données
-            displayVitalScore(testResults);
-            displayCategoryScores(testResults);
-            displayTestHistory(testResults);
+            displayVitalScore();
+            displayCategoryScores();
+            displayTestHistory();
             
         } catch (error) {
             console.error('Erreur lors du chargement des données utilisateur:', error);
-            displayErrorMessage();
+            displayErrorMessage(error);
         }
     }
     
@@ -46,7 +46,9 @@ const Bilan = (function() {
     }
     
     // Fonction pour afficher un message d'erreur
-    function displayErrorMessage() {
+    function displayErrorMessage(error) {
+        console.error('Erreur dans le bilan:', error);
+        
         // VitalScore
         document.getElementById('vital-score-value').textContent = '--';
         
@@ -62,15 +64,15 @@ const Bilan = (function() {
     }
     
     // Fonction pour afficher le VitalScore
-    function displayVitalScore(testResults) {
+    function displayVitalScore() {
         try {
             // Calculer le score moyen
             let totalScore = 0;
-            testResults.forEach(result => {
+            userResults.forEach(result => {
                 totalScore += result.globalScore;
             });
             
-            const averageScore = Math.round(totalScore / testResults.length);
+            const averageScore = Math.round(totalScore / userResults.length);
             
             // Afficher le score
             document.getElementById('vital-score-value').textContent = averageScore;
@@ -81,7 +83,7 @@ const Bilan = (function() {
             // Supprimer les classes précédentes
             scoreElement.classList.remove('score-low', 'score-medium', 'score-high');
             
-            // Ajouter la nouvelle classe
+            // Ajouter la nouvelle classe en utilisant la fonction helper
             if (averageScore < 40) {
                 scoreElement.classList.add('score-low');
             } else if (averageScore < 70) {
@@ -96,10 +98,10 @@ const Bilan = (function() {
     }
     
     // Fonction pour afficher les scores par catégorie
-    function displayCategoryScores(testResults) {
+    function displayCategoryScores() {
         try {
             // Regrouper les résultats par catégorie
-            const categoryTests = groupTestsByCategory(testResults);
+            const categoryTests = groupTestsByCategory();
             
             // Vérifier s'il y a des résultats
             if (Object.keys(categoryTests).length === 0) {
@@ -156,10 +158,10 @@ const Bilan = (function() {
     }
     
     // Fonction pour afficher l'historique des tests
-    function displayTestHistory(testResults) {
+    function displayTestHistory() {
         try {
             // Trier les résultats par date (du plus récent au plus ancien)
-            const sortedResults = [...testResults].sort((a, b) => {
+            const sortedResults = [...userResults].sort((a, b) => {
                 return new Date(b.dateCompleted) - new Date(a.dateCompleted);
             });
             
@@ -167,9 +169,9 @@ const Bilan = (function() {
             let html = '<div class="test-history-list">';
             
             sortedResults.forEach(result => {
-                // Formater la date
+                // Formater la date en utilisant l'helper
                 const date = new Date(result.dateCompleted);
-                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                const formattedDate = Helpers.formatDate(date);
                 
                 // Déterminer la classe de couleur
                 let colorClass = '';
@@ -208,11 +210,11 @@ const Bilan = (function() {
     }
     
     // Fonction utilitaire pour regrouper les tests par catégorie
-    function groupTestsByCategory(testResults) {
+    function groupTestsByCategory() {
         const categoryTests = {};
         
         // Parcourir tous les résultats de test
-        testResults.forEach(result => {
+        userResults.forEach(result => {
             // Trouver la catégorie du test
             let categoryName = "Non catégorisé";
             
@@ -241,6 +243,6 @@ const Bilan = (function() {
     
     // Interface publique
     return {
-        loadUserData
+        loadUserData: loadUserData
     };
 })();
