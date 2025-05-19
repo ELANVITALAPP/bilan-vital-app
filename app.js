@@ -1,4 +1,4 @@
-// app.js - Version simplifiée mise à jour pour utiliser les objets globaux
+// app.js - Version complète avec les gestionnaires d'événements pour les boutons de retour
 document.addEventListener('DOMContentLoaded', function() {
     // Initialisation de l'application
     console.log('Initialisation de Bilan Vital - Version simplifiée');
@@ -47,6 +47,21 @@ function initNavigation() {
     });
     
     document.getElementById('back-from-bilan').addEventListener('click', function() {
+        showSection('welcome');
+    });
+    
+    // Boutons de retour supplémentaires
+    document.getElementById('back-to-home-from-tests').addEventListener('click', function() {
+        showSection('welcome');
+    });
+
+    document.getElementById('back-to-tests-from-question').addEventListener('click', function() {
+        if (confirm('Voulez-vous vraiment quitter ce test ? Votre progression ne sera pas sauvegardée.')) {
+            showSection('tests-list');
+        }
+    });
+
+    document.getElementById('back-to-home-from-bilan').addEventListener('click', function() {
         showSection('welcome');
     });
     
