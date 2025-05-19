@@ -36,6 +36,9 @@
         </section>
 
         <section id="tests-list" class="hidden">
+            <!-- Bouton de retour -->
+            <button class="btn-back" id="back-to-home-from-tests">Retour</button>
+            
             <h2>Tests de santé</h2>
             <p>Sélectionnez un test pour commencer votre évaluation :</p>
             
@@ -48,6 +51,9 @@
         </section>
 
         <section id="test-content" class="hidden">
+            <!-- Bouton de retour -->
+            <button class="btn-back" id="back-to-tests-from-question">Retour</button>
+            
             <h2 id="test-title">Nom du test</h2>
             <div class="test-progress">
                 <div class="progress-bar">
@@ -67,6 +73,9 @@
         </section>
 
         <section id="bilan" class="hidden">
+            <!-- Bouton de retour -->
+            <button class="btn-back" id="back-to-home-from-bilan">Retour</button>
+            
             <h2>Votre bilan personnel</h2>
             
             <div class="score-overview">
@@ -102,7 +111,10 @@
         <p>&copy; 2025 Bilan Vital - Version simplifiée</p>
     </footer>
 
-    <!-- Scripts - structure à plat -->
+    <!-- Scripts - D'abord le module de correction -->
+    <script src="modules-fix.js"></script>
+    
+    <!-- Puis les autres scripts -->
     <script src="helper.js"></script>
     <script src="stockage.js"></script>
     <script src="testsData.js"></script>
