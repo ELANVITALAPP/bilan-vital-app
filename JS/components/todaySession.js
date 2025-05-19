@@ -78,6 +78,7 @@ const todaySessionModule = (function() {
     function initialize() {
         // Écouter les événements de navigation
         document.addEventListener('navigation:change', handleNavigationChange);
+        console.log("Module today session initialisé");
     }
     
     /**
@@ -824,6 +825,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Export du module pour utilisation dans d'autres fichiers
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = todaySessionModule;
-}
+window.todaySessionModule = todaySessionModule;
