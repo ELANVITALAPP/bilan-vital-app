@@ -440,6 +440,205 @@ const testsData = {
             ]
         },
         {
+            id: "motivations",
+            name: "Motivations",
+            icon: "target",
+            description: "Identifiez vos motivations, objectifs et les leviers de votre engagement",
+            color: "#3A8748",
+            tests: [
+                {
+                    id: "motivation-sante",
+                    name: "Motivation pour la Santé",
+                    description: "Évaluez vos motivations pour prendre soin de votre santé",
+                    duration: "5-7",
+                    difficulty: 1,
+                    categoryId: "motivations",
+                    instructions: "Indiquez votre niveau d'accord avec ces affirmations concernant vos motivations pour prendre soin de votre santé.",
+                    questions: [
+                        {
+                            id: "motiv-1",
+                            text: "Je prends soin de ma santé parce que j'y prends plaisir",
+                            type: "likert"
+                        },
+                        {
+                            id: "motiv-2",
+                            text: "Je prends soin de ma santé parce que c'est important pour atteindre mes objectifs de vie",
+                            type: "likert"
+                        },
+                        {
+                            id: "motiv-3",
+                            text: "Je prends soin de ma santé pour éviter de décevoir mon entourage",
+                            type: "likert"
+                        },
+                        {
+                            id: "motiv-4",
+                            text: "Je prends soin de ma santé car je me sentirais coupable de ne pas le faire",
+                            type: "likert"
+                        },
+                        {
+                            id: "motiv-5",
+                            text: "Je ne vois pas l'intérêt de prendre soin de ma santé",
+                            type: "likert"
+                        }
+                    ]
+                },
+                {
+                    id: "objectifs",
+                    name: "Objectifs de Santé",
+                    description: "Clarifiez vos objectifs en matière de santé et de bien-être",
+                    duration: "6-8",
+                    difficulty: 1,
+                    categoryId: "motivations",
+                    instructions: "Évaluez l'importance des objectifs suivants pour vous.",
+                    questions: [
+                        {
+                            id: "obj-1",
+                            text: "Améliorer ma forme physique générale",
+                            type: "slider",
+                            minLabel: "Pas important",
+                            maxLabel: "Très important"
+                        },
+                        {
+                            id: "obj-2",
+                            text: "Perdre du poids ou modifier ma composition corporelle",
+                            type: "slider",
+                            minLabel: "Pas important",
+                            maxLabel: "Très important"
+                        },
+                        {
+                            id: "obj-3",
+                            text: "Réduire mon stress ou améliorer mon bien-être mental",
+                            type: "slider",
+                            minLabel: "Pas important",
+                            maxLabel: "Très important"
+                        },
+                        {
+                            id: "obj-4",
+                            text: "Améliorer ma posture et ma mobilité",
+                            type: "slider",
+                            minLabel: "Pas important",
+                            maxLabel: "Très important"
+                        },
+                        {
+                            id: "obj-5",
+                            text: "Prévenir ou gérer une condition de santé spécifique",
+                            type: "slider",
+                            minLabel: "Pas important",
+                            maxLabel: "Très important"
+                        }
+                    ]
+                },
+                {
+                    id: "pratique-passee",
+                    name: "Pratique d'Activité Physique Passée",
+                    description: "Évaluez votre historique d'activité physique",
+                    duration: "4-6",
+                    difficulty: 1,
+                    categoryId: "motivations",
+                    instructions: "Répondez aux questions suivantes concernant votre pratique d'activité physique passée.",
+                    questions: [
+                        {
+                            id: "prat-1",
+                            text: "Avez-vous pratiqué régulièrement une activité physique au cours de votre vie ?",
+                            type: "multiple-choice",
+                            options: [
+                                { text: "Non, jamais", score: 1 },
+                                { text: "Oui, pendant l'enfance/adolescence uniquement", score: 2 },
+                                { text: "Oui, à l'âge adulte mais pas récemment", score: 3 },
+                                { text: "Oui, et jusqu'à récemment", score: 4 }
+                            ],
+                            maxScore: 4
+                        },
+                        {
+                            id: "prat-2",
+                            text: "Quels types d'activités physiques avez-vous pratiqués dans le passé ?",
+                            type: "multiple-choice",
+                            options: [
+                                { text: "Aucune activité régulière", score: 1 },
+                                { text: "Activités d'endurance (marche, course, natation...)", score: 2 },
+                                { text: "Activités de force ou musculation", score: 2 },
+                                { text: "Sports collectifs", score: 2 },
+                                { text: "Activités de souplesse (yoga, pilates...)", score: 2 },
+                                { text: "Plusieurs types d'activités différentes", score: 3 }
+                            ],
+                            maxScore: 3
+                        },
+                        {
+                            id: "prat-3",
+                            text: "Quelle a été la durée de votre plus longue période de pratique régulière ?",
+                            type: "multiple-choice",
+                            options: [
+                                { text: "Je n'ai jamais pratiqué régulièrement", score: 1 },
+                                { text: "Quelques semaines à quelques mois", score: 2 },
+                                { text: "1 à 2 ans", score: 3 },
+                                { text: "Plus de 2 ans", score: 4 }
+                            ],
+                            maxScore: 4
+                        },
+                        {
+                            id: "prat-4",
+                            text: "Combien de temps s'est écoulé depuis votre dernière période d'activité physique régulière ?",
+                            type: "multiple-choice",
+                            options: [
+                                { text: "Je pratique actuellement", score: 4 },
+                                { text: "Moins de 6 mois", score: 3 },
+                                { text: "Entre 6 mois et 2 ans", score: 2 },
+                                { text: "Plus de 2 ans", score: 1 },
+                                { text: "Je n'ai jamais pratiqué régulièrement", score: 0 }
+                            ],
+                            maxScore: 4
+                        }
+                    ]
+                },
+                {
+                    id: "freins-leviers",
+                    name: "Freins et Leviers",
+                    description: "Identifiez ce qui vous empêche ou vous aide à pratiquer une activité physique régulière",
+                    duration: "5-7",
+                    difficulty: 1,
+                    categoryId: "motivations",
+                    instructions: "Indiquez dans quelle mesure les facteurs suivants limitent ou favorisent votre pratique d'activité physique.",
+                    questions: [
+                        {
+                            id: "fl-1",
+                            text: "Manque de temps",
+                            type: "slider",
+                            minLabel: "Ne me limite pas du tout",
+                            maxLabel: "Me limite beaucoup"
+                        },
+                        {
+                            id: "fl-2",
+                            text: "Fatigue ou manque d'énergie",
+                            type: "slider",
+                            minLabel: "Ne me limite pas du tout",
+                            maxLabel: "Me limite beaucoup"
+                        },
+                        {
+                            id: "fl-3",
+                            text: "Douleurs ou problèmes de santé",
+                            type: "slider",
+                            minLabel: "Ne me limite pas du tout",
+                            maxLabel: "Me limite beaucoup"
+                        },
+                        {
+                            id: "fl-4",
+                            text: "Manque de motivation ou d'intérêt",
+                            type: "slider",
+                            minLabel: "Ne me limite pas du tout",
+                            maxLabel: "Me limite beaucoup"
+                        },
+                        {
+                            id: "fl-5",
+                            text: "Soutien de l'entourage",
+                            type: "slider",
+                            minLabel: "Pas du tout présent",
+                            maxLabel: "Très présent"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             id: "tests-physiques",
             name: "Tests Physiques",
             icon: "movement",
@@ -553,6 +752,32 @@ const testsData = {
                     ]
                 },
                 {
+                    id: "equilibre-dynamique",
+                    name: "Équilibre dynamique",
+                    description: "Évaluez votre équilibre lors du mouvement",
+                    duration: "3-5",
+                    difficulty: 2,
+                    categoryId: "tests-physiques",
+                    instructions: "Marchez en ligne droite en posant le talon d'un pied directement devant les orteils de l'autre pied (marche tandem) sur une distance de 3 mètres. Essayez de marcher le plus droit possible.",
+                    isPhysical: true,
+                    videoUrl: "assets/videos/test-equilibre-dynamique.mp4",
+                    questions: [
+                        {
+                            id: "equilibre-dynamique-1",
+                            text: "Comment avez-vous réussi ce test ?",
+                            type: "multiple-choice",
+                            options: [
+                                { text: "Impossible de marcher en ligne droite sans perdre l'équilibre", score: 1 },
+                                { text: "Capable de faire quelques pas mais avec beaucoup d'instabilité", score: 2 },
+                                { text: "Capable de marcher la distance avec quelques écarts ou hésitations", score: 3 },
+                                { text: "Capable de marcher la distance avec peu d'écarts", score: 4 },
+                                { text: "Capable de marcher parfaitement en ligne droite sans écart", score: 5 }
+                            ],
+                            maxScore: 5
+                        }
+                    ]
+                },
+                {
                     id: "endurance",
                     name: "Test d'endurance",
                     description: "Évaluez votre endurance cardiovasculaire",
@@ -574,6 +799,87 @@ const testsData = {
                                 { text: "Légèrement essoufflé(e), mais j'ai pu maintenir le rythme", score: 3 },
                                 { text: "Peu essoufflé(e), j'ai trouvé cela facile", score: 4 },
                                 { text: "Pas du tout essoufflé(e), j'aurais pu continuer plus longtemps", score: 5 }
+                            ],
+                            maxScore: 5
+                        }
+                    ]
+                },
+                {
+                    id: "force-abdos",
+                    name: "Force des abdominaux (Test Shirado-Ito)",
+                    description: "Évaluez la force et l'endurance de vos muscles abdominaux",
+                    duration: "3-5",
+                    difficulty: 2,
+                    categoryId: "tests-physiques",
+                    instructions: "Allongez-vous sur le dos, genoux fléchis, pieds à plat sur le sol. Soulevez la tête et les épaules de façon à ce que vos omoplates ne touchent plus le sol. Placez vos bras tendus le long du corps. Maintenez cette position aussi longtemps que possible.",
+                    isPhysical: true,
+                    videoUrl: "assets/videos/test-shirado-ito.mp4",
+                    timerDuration: 120,
+                    questions: [
+                        {
+                            id: "force-abdos-1",
+                            text: "Combien de temps avez-vous maintenu la position (en secondes) ?",
+                            type: "multiple-choice",
+                            options: [
+                                { text: "Moins de 15 secondes", score: 1 },
+                                { text: "15-30 secondes", score: 2 },
+                                { text: "31-60 secondes", score: 3 },
+                                { text: "61-90 secondes", score: 4 },
+                                { text: "Plus de 90 secondes", score: 5 }
+                            ],
+                            maxScore: 5
+                        }
+                    ]
+                },
+                {
+                    id: "force-dos",
+                    name: "Force du dos (Test de Sorensen)",
+                    description: "Évaluez la force et l'endurance des muscles de votre dos",
+                    duration: "3-5",
+                    difficulty: 2,
+                    categoryId: "tests-physiques",
+                    instructions: "Allongez-vous sur le ventre, le haut du corps dans le vide (sur un banc ou une table avec quelqu'un tenant vos jambes), ou à plat sur le sol. Placez vos mains croisées sur les épaules. Soulevez le tronc à l'horizontale et maintenez cette position aussi longtemps que possible.",
+                    isPhysical: true,
+                    videoUrl: "assets/videos/test-sorensen.mp4",
+                    timerDuration: 120,
+                    questions: [
+                        {
+                            id: "force-dos-1",
+                            text: "Combien de temps avez-vous maintenu la position (en secondes) ?",
+                            type: "multiple-choice",
+                            options: [
+                                { text: "Moins de 20 secondes", score: 1 },
+                                { text: "20-40 secondes", score: 2 },
+                                { text: "41-60 secondes", score: 3 },
+                                { text: "61-90 secondes", score: 4 },
+                                { text: "Plus de 90 secondes", score: 5 }
+                            ],
+                            maxScore: 5
+                        }
+                    ]
+                },
+                {
+                    id: "force-bras",
+                    name: "Force des membres supérieurs (Arm Curl)",
+                    description: "Évaluez la force et l'endurance des muscles de vos bras",
+                    duration: "2-3",
+                    difficulty: 2,
+                    categoryId: "tests-physiques",
+                    instructions: "Asseyez-vous sur une chaise avec le dos droit. Pour les femmes, prenez un haltère de 2 kg (ou une bouteille d'eau équivalente). Pour les hommes, prenez un haltère de 3-4 kg. Effectuez des flexions du coude (arm curl) en ramenant l'avant-bras vers l'épaule. Comptez combien de répétitions vous pouvez faire en 30 secondes.",
+                    isPhysical: true,
+                    videoUrl: "assets/videos/test-arm-curl.mp4",
+                    timerDuration: 30,
+                    questions: [
+                        {
+                            id: "force-bras-1",
+                            text: "Nombre de flexions complètes réalisées en 30 secondes",
+                            type: "multiple-choice",
+                            options: [
+                                { text: "0-8 répétitions", score: 1 },
+                                { text: "9-13 répétitions", score: 2 },
+                                { text: "14-18 répétitions", score: 3 },
+                                { text: "19-23 répétitions", score: 4 },
+                                { text: "24 répétitions ou plus", score: 5 }
                             ],
                             maxScore: 5
                         }
