@@ -105,16 +105,28 @@ function loadTests() {
             return;
         }
         
-        // Vérifier si les données de test sont disponibles
-        if (!window.testsData || !Array.isArray(window.testsData.categories)) {
-            throw new Error('Les données de test ne sont pas disponibles');
+        // Vérifier si les données de test sont disponibles (plusieurs façons)
+        let testData = null;
+        
+        if (window.testsData && Array.isArray(window.testsData.categories)) {
+            testData = window.testsData;
+        } else if (typeof testsData !== 'undefined' && Array.isArray(testsData.categories)) {
+            testData = testsData;
+        } else {
+            // Afficher des infos de débogage
+            console.error('Débogage testsData:');
+            console.log('window.testsData:', window.testsData);
+            console.log('testsData:', typeof testsData !== 'undefined' ? testsData : 'undefined');
+            console.log('Scripts chargés:', Array.from(document.scripts).map(s => s.src));
+            
+            throw new Error('Les données de test ne sont pas disponibles - Vérifiez que testsData.js est bien chargé');
         }
         
         // Vider le conteneur
         testsContainer.innerHTML = '';
         
         // Ajouter chaque catégorie et ses tests
-        window.testsData.categories.forEach(category => {
+        testData.categories.forEach(category => {
             // Créer l'élément de catégorie
             const categoryEl = document.createElement('div');
             categoryEl.className = 'test-category';
