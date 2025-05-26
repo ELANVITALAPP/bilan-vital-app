@@ -1,4 +1,4 @@
-// storage.js - Gestion simplifiée du stockage local
+// stockage.js - Gestion simplifiée du stockage local
 const Storage = (function() {
     // Préfixe pour toutes les clés de stockage
     const PREFIX = 'bilanVital_';
@@ -81,6 +81,16 @@ const Storage = (function() {
         getData,
         removeData,
         hasData,
-        clearAllData
+        clearAllData,
+        // Alias pour compatibilité
+        save: saveData,
+        get: getData,
+        remove: removeData,
+        has: hasData,
+        clear: clearAllData
     };
 })();
+
+// Export global pour compatibilité avec app.js
+window.storage = Storage;
+window.Storage = Storage;
