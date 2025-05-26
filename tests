@@ -1,0 +1,466 @@
+// tests.js - Module de gestion des tests
+const Tests = (function() {
+    // Variables d'état du test en cours
+    let currentTest = null;
+    let currentQuestionIndex = 0;
+    let answers = [];
+    
+    /**
+     * Démarrer un test
+     * @param {string} testId - ID du test à démarrer
+     */
+    function startTest(testId) {
+        console.log('Démarrage du test:', testId);
+        
+        // Trouver le test dans les données
+        let foundTest = null;
+        if (testsData && testsData.categories) {
+            testsData.categories.forEach(category => {
+                category.tests.forEach(test => {
+                    if (test.id === testId) {
+                        foundTest = test;
+                    }
+                });
+            });
+        }
+        
+        if (!foundTest) {
+            console.error('Test non trouvé:', testId);
+            alert('Test non trouvé. Veuillez réessayer.');
+            return;
+        }
+        
+        // Initialiser l'état du test
+        currentTest = foundTest;
+        currentQuestionIndex = 0;
+        answers = new Array(foundTest.questions.length).fill(null);
+        
+        // Afficher la section du test
+        showTestSection();
+        displayCurrentQuestion();
+    }
+    
+    /**
+     * Afficher la section de test
+     */
+    function showTestSection() {
+        // Masquer toutes les sections
+        document.querySelectorAll('main > section').forEach(section => {
+            section.classList.add('hidden');
+            section.classList.remove('active');
+        });
+        
+        // Afficher la section du test
+        const testSection = document.getElementById('test-content');
+        if (testSection) {
+            testSection.classList.remove('hidden');
+            testSection.classList.add('active');
+            
+            // Mettre à jour le titre
+            const titleElement = document.getElementById('test-title');
+            if (titleElement) {
+                titleElement.textContent = currentTest.name;
+            }
+        }
+    }
+    
+    /**
+     * Afficher la question actuelle
+     */
+    function displayCurrentQuestion() {
+        if (!currentTest || !currentTest.questions) return;
+        
+        const question = currentTest.questions[currentQuestionIndex];
+        const container = document.getElementById('question-container');
+        
+        if (!container) return;
+        
+        // Mettre à jour la barre de progression
+        updateProgressBar();
+        
+        // Créer le HTML de la question
+        let questionHtml = `<div class="question">
+            <h3>${question.text}</h3>`;
+        
+        // Générer le contenu selon le type de question
+        if (question.type === 'multiple-choice') {
+            questionHtml += generateMultipleChoiceQuestion(question);
+        } else if (question.type === 'number') {
+            questionHtml += generateNumberQuestion(question);
+        } else if (question.type === 'slider') {
+            questionHtml += generateSliderQuestion(question);
+        } else if (question.type === 'likert') {
+            questionHtml += generateLikertQuestion(question);
+        } else if (question.type === 'text') {
+            questionHtml += generateTextQuestion(question);
+        }
+        
+        questionHtml += '</div>';
+        container.innerHTML = questionHtml;
+        
+        // Restaurer la réponse précédente si elle existe
+        restorePreviousAnswer();
+        
+        // Mettre à jour les boutons de navigation
+        updateNavigationButtons();
+    }
+    
+    /**
+     * Générer une question à choix multiples
+     */
+    function generateMultipleChoiceQuestion(question) {
+        let html = '<div class="options">';
+        question.options.forEach((option, index) => {
+            html += `
+                <label class="option">
+                    <input type="radio" name="answer" value="${index}">
+                    <span>${option.text}</span>
+                </label>`;
+        });
+        html += '</div>';
+        return html;
+    }
+    
+    /**
+     * Générer une question numérique
+     */
+    function generateNumberQuestion(question) {
+        return `<input type="number" id="number-answer" placeholder="${question.placeholder || 'Votre réponse'}" min="0">`;
+    }
+    
+    /**
+     * Générer une question avec slider
+     */
+    function generateSliderQuestion(question) {
+        return `
+            <div class="slider-container">
+                <label for="slider-answer">${question.minLabel || 'Minimum'}</label>
+                <input type="range" id="slider-answer" min="0" max="100" value="50" class="slider">
+                <label for="slider-answer">${question.maxLabel || 'Maximum'}</label>
+                <div class="slider-value"><span id="slider-value-display">50</span>/100</div>
+            </div>
+            <script>
+                document.getElementById('slider-answer').addEventListener('input', function() {
+                    document.getElementById('slider-value-display').textContent = this.value;
+                });
+            </script>
+        `;
+    }
+    
+    /**
+     * Générer une question Likert
+     */
+    function generateLikertQuestion(question) {
+        const likertOptions = [
+            { text: "Jamais", score: 1 },
+            { text: "Rarement", score: 2 },
+            { text: "Parfois", score: 3 },
+            { text: "Souvent", score: 4 },
+            { text: "Toujours", score: 5 }
+        ];
+        
+        let html = '<div class="likert-options">';
+        likertOptions.forEach((option, index) => {
+            html += `
+                <label class="likert-option">
+                    <input type="radio" name="answer" value="${index}">
+                    <span>${option.text}</span>
+                </label>`;
+        });
+        html += '</div>';
+        return html;
+    }
+    
+    /**
+     * Générer une question texte
+     */
+    function generateTextQuestion(question) {
+        return `<input type="text" id="text-answer" placeholder="${question.placeholder || 'Votre réponse'}">`;
+    }
+    
+    /**
+     * Mettre à jour la barre de progression
+     */
+    function updateProgressBar() {
+        const progress = ((currentQuestionIndex + 1) / currentTest.questions.length) * 100;
+        
+        const progressFill = document.querySelector('.progress-fill');
+        if (progressFill) {
+            progressFill.style.width = progress + '%';
+        }
+        
+        const currentQuestionEl = document.getElementById('current-question');
+        if (currentQuestionEl) {
+            currentQuestionEl.textContent = currentQuestionIndex + 1;
+        }
+        
+        const totalQuestionsEl = document.getElementById('total-questions');
+        if (totalQuestionsEl) {
+            totalQuestionsEl.textContent = currentTest.questions.length;
+        }
+    }
+    
+    /**
+     * Restaurer la réponse précédente
+     */
+    function restorePreviousAnswer() {
+        const previousAnswer = answers[currentQuestionIndex];
+        if (!previousAnswer) return;
+        
+        const question = currentTest.questions[currentQuestionIndex];
+        
+        if (question.type === 'multiple-choice' || question.type === 'likert') {
+            const radio = document.querySelector(`input[name="answer"][value="${previousAnswer.value}"]`);
+            if (radio) radio.checked = true;
+        } else if (question.type === 'number') {
+            const input = document.getElementById('number-answer');
+            if (input) input.value = previousAnswer.value;
+        } else if (question.type === 'slider') {
+            const slider = document.getElementById('slider-answer');
+            if (slider) {
+                slider.value = previousAnswer.value;
+                const display = document.getElementById('slider-value-display');
+                if (display) display.textContent = previousAnswer.value;
+            }
+        } else if (question.type === 'text') {
+            const input = document.getElementById('text-answer');
+            if (input) input.value = previousAnswer.value;
+        }
+    }
+    
+    /**
+     * Mettre à jour les boutons de navigation
+     */
+    function updateNavigationButtons() {
+        const prevButton = document.getElementById('prev-question');
+        const nextButton = document.getElementById('next-question');
+        
+        if (prevButton) {
+            prevButton.style.display = currentQuestionIndex > 0 ? 'inline-block' : 'none';
+        }
+        
+        if (nextButton) {
+            nextButton.textContent = 
+                currentQuestionIndex < currentTest.questions.length - 1 ? 'Suivant' : 'Terminer';
+        }
+    }
+    
+    /**
+     * Question suivante
+     */
+    function nextQuestion() {
+        // Sauvegarder la réponse actuelle
+        if (!saveCurrentAnswer()) {
+            alert('Veuillez répondre à cette question avant de continuer.');
+            return;
+        }
+        
+        if (currentQuestionIndex < currentTest.questions.length - 1) {
+            currentQuestionIndex++;
+            displayCurrentQuestion();
+        } else {
+            // Terminer le test
+            finishTest();
+        }
+    }
+    
+    /**
+     * Question précédente
+     */
+    function previousQuestion() {
+        // Sauvegarder la réponse actuelle
+        saveCurrentAnswer();
+        
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            displayCurrentQuestion();
+        }
+    }
+    
+    /**
+     * Sauvegarder la réponse actuelle
+     */
+    function saveCurrentAnswer() {
+        const question = currentTest.questions[currentQuestionIndex];
+        let answer = null;
+        
+        if (question.type === 'multiple-choice' || question.type === 'likert') {
+            const selected = document.querySelector('input[name="answer"]:checked');
+            if (selected) {
+                const optionIndex = parseInt(selected.value);
+                const options = question.type === 'likert' ? 
+                    [
+                        { text: "Jamais", score: 1 },
+                        { text: "Rarement", score: 2 },
+                        { text: "Parfois", score: 3 },
+                        { text: "Souvent", score: 4 },
+                        { text: "Toujours", score: 5 }
+                    ] : question.options;
+                
+                answer = {
+                    type: question.type,
+                    value: optionIndex,
+                    text: options[optionIndex].text,
+                    score: options[optionIndex].score || 0
+                };
+            }
+        } else if (question.type === 'number') {
+            const input = document.getElementById('number-answer');
+            if (input && input.value) {
+                answer = {
+                    type: 'number',
+                    value: parseInt(input.value)
+                };
+            }
+        } else if (question.type === 'slider') {
+            const slider = document.getElementById('slider-answer');
+            if (slider) {
+                answer = {
+                    type: 'slider',
+                    value: parseInt(slider.value)
+                };
+            }
+        } else if (question.type === 'text') {
+            const input = document.getElementById('text-answer');
+            if (input && input.value.trim()) {
+                answer = {
+                    type: 'text',
+                    value: input.value.trim()
+                };
+            }
+        }
+        
+        // Pour les questions obligatoires, vérifier qu'une réponse a été donnée
+        if (!answer && question.required !== false) {
+            return false;
+        }
+        
+        answers[currentQuestionIndex] = answer;
+        return true;
+    }
+    
+    /**
+     * Terminer le test
+     */
+    function finishTest() {
+        console.log('Test terminé:', currentTest.name);
+        console.log('Réponses:', answers);
+        
+        // Calculer le score
+        const score = calculateScore();
+        
+        // Créer le résultat du test
+        const result = {
+            testId: currentTest.id,
+            testName: currentTest.name,
+            answers: answers,
+            score: score,
+            date: new Date().toISOString()
+        };
+        
+        // Sauvegarder le résultat
+        try {
+            userData.saveTestResult(result);
+            
+            // Afficher le résultat
+            showTestResult(result);
+        } catch (error) {
+            console.error('Erreur lors de la sauvegarde:', error);
+            alert('Erreur lors de la sauvegarde du test. Veuillez réessayer.');
+        }
+    }
+    
+    /**
+     * Calculer le score du test
+     */
+    function calculateScore() {
+        let totalScore = 0;
+        let maxScore = 0;
+        let validAnswers = 0;
+        
+        answers.forEach((answer, index) => {
+            if (answer) {
+                if (answer.type === 'multiple-choice' || answer.type === 'likert') {
+                    const question = currentTest.questions[index];
+                    let questionScore = answer.score || 0;
+                    let questionMaxScore = 5; // Par défaut
+                    
+                    if (question.type === 'likert') {
+                        questionMaxScore = 5;
+                    } else if (question.options) {
+                        questionMaxScore = Math.max(...question.options.map(opt => opt.score || 0));
+                    }
+                    
+                    totalScore += questionScore;
+                    maxScore += questionMaxScore;
+                    validAnswers++;
+                } else if (answer.type === 'slider') {
+                    totalScore += answer.value;
+                    maxScore += 100;
+                    validAnswers++;
+                } else if (answer.type === 'number') {
+                    // Pour les questions numériques, on ne peut pas calculer un score sans contexte
+                    validAnswers++;
+                }
+            }
+        });
+        
+        const percentage = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
+        
+        return {
+            total: totalScore,
+            max: maxScore,
+            percentage: percentage,
+            validAnswers: validAnswers
+        };
+    }
+    
+    /**
+     * Afficher le résultat du test
+     */
+    function showTestResult(result) {
+        const message = `Test terminé !
+        
+Score : ${result.score.percentage}%
+        
+Votre résultat a été sauvegardé. Consultez votre bilan pour voir l'évolution de vos performances.`;
+        
+        alert(message);
+        
+        // Retourner à l'accueil
+        returnToHome();
+    }
+    
+    /**
+     * Retourner à l'accueil
+     */
+    function returnToHome() {
+        // Réinitialiser l'état
+        currentTest = null;
+        currentQuestionIndex = 0;
+        answers = [];
+        
+        // Afficher la section d'accueil
+        document.querySelectorAll('main > section').forEach(section => {
+            section.classList.add('hidden');
+            section.classList.remove('active');
+        });
+        
+        const welcomeSection = document.getElementById('welcome');
+        if (welcomeSection) {
+            welcomeSection.classList.remove('hidden');
+            welcomeSection.classList.add('active');
+        }
+    }
+    
+    // API publique
+    return {
+        startTest,
+        nextQuestion,
+        previousQuestion,
+        returnToHome
+    };
+})();
+
+// Export global
+window.Tests = Tests;
