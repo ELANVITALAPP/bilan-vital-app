@@ -22,13 +22,13 @@
             
             <div class="main-options">
                 <div class="option-card" id="show-tests">
-                    <h3>Tests de santé</h3>
-                    <p>Évaluez votre condition physique, mentale et émotionnelle grâce à nos tests personnalisés.</p>
+                    <h3>Testez ma condition physique actuelle</h3>
+                    <p>Évaluez votre condition physique à domicile avec des tests simples et sécurisés.</p>
                     <button class="btn-primary">Découvrir</button>
                 </div>
                 
                 <div class="option-card" id="show-bilan">
-                    <h3>Bilan personnel</h3>
+                    <h3>Mon Suivi</h3>
                     <p>Consultez le récapitulatif de vos résultats et suivez votre progression dans le temps.</p>
                     <button class="btn-primary">Découvrir</button>
                 </div>
@@ -36,10 +36,7 @@
         </section>
 
         <section id="tests-list" class="hidden">
-            <!-- Bouton de retour -->
-            <button class="btn-back" id="back-to-home-from-tests">Retour</button>
-            
-            <h2>Tests de santé</h2>
+            <h2>Testez ma condition physique actuelle</h2>
             <p>Sélectionnez un test pour commencer votre évaluation :</p>
             
             <div id="tests-container" class="tests-grid">
@@ -51,9 +48,6 @@
         </section>
 
         <section id="test-content" class="hidden">
-            <!-- Bouton de retour -->
-            <button class="btn-back" id="back-to-tests-from-question">Retour</button>
-            
             <h2 id="test-title">Nom du test</h2>
             <div class="test-progress">
                 <div class="progress-bar">
@@ -73,10 +67,7 @@
         </section>
 
         <section id="bilan" class="hidden">
-            <!-- Bouton de retour -->
-            <button class="btn-back" id="back-to-home-from-bilan">Retour</button>
-            
-            <h2>Votre bilan personnel</h2>
+            <h2>Mon Suivi</h2>
             
             <div class="score-overview">
                 <div class="vital-score">
@@ -111,10 +102,7 @@
         <p>&copy; 2025 Bilan Vital - Version simplifiée</p>
     </footer>
 
-    <!-- Scripts - D'abord le module de correction -->
-    <script src="modules-fix.js"></script>
-    
-    <!-- Puis les autres scripts -->
+    <!-- Scripts - structure à plat -->
     <script src="helper.js"></script>
     <script src="stockage.js"></script>
     <script src="testsData.js"></script>
