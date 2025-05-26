@@ -1,4 +1,4 @@
-// helpers.js - Fonctions utilitaires simplifiées
+// helper.js - Fonctions utilitaires simplifiées
 const Helpers = (function() {
     // Fonction pour formater une date
     function formatDate(date) {
@@ -70,3 +70,7 @@ const Helpers = (function() {
         average
     };
 })();
+
+// Export global pour compatibilité avec app.js
+window.helpers = Helpers;
+window.Helpers = Helpers;
